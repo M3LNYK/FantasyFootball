@@ -1,60 +1,57 @@
 library(tidyverse)
-library(rvest)
+library(rvest)  # Not used in this specific code, but might be helpful for future scraping
 library(httr2)
 library(stringi)
-library(xml2)
+library(xml2)  # Not used in this specific code, but might be helpful for future scraping
 
-# Web Scraping Function for Football Player Statistics
-extract_filtered_links <- function(competition_url) {
+extract_player_stats_links <- function(competition_url) {
   tryCatch({
-    # Create a request object
-    req <- request(competition_url) %>%
+    player_stats_url <- "https://www.fotmob.com/_next/data/pvJAuiZ8YEQispGXaw-zM/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
+
+    # Create the request object
+    stats_req <- request(player_stats_url) %>%
       req_headers(
-        `User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        `User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+        `Accept` = "*/*"
       )
 
-    # Send the request and get the response
-    resp <- req_perform(req)
+    # Perform the request
+    stats_resp <- req_perform(stats_req)
 
-    # Get the content as text
-    content <- resp_body_string(resp)
+    # Check if stats_resp is a valid response object
+    if (!is.response(stats_resp)) {
+      message("Error: stats_resp is not a valid HTTP response object.")
+      return(list())
+    }
 
-    # Extract ALL links using stringi
-    all_links <- stri_extract_all_regex(content, "href=[\"']([^\"']+)[\"']")[[1]]
+    # Check for HTTP errors
+    if (resp_status(stats_resp) != 200) {
+      message(paste("HTTP error:", resp_status(stats_resp), resp_status_desc(stats_resp)))
+      return(list())
+    }
 
-    # Create a tibble with the links
-    processed_links <- tibble(
-      original_link = all_links,
-      clean_link = stri_extract_first_regex(all_links, "(?<=\").*?(?=\")")
-    ) %>%
-      # Filter out unwanted links
-      filter(
-        !stri_detect_regex(clean_link, "\\.css", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "/news", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "/transfers", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "android", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "twitter", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "facebook", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "careers", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "company", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "instagram", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "tiktok", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
-          !stri_detect_regex(clean_link, "faq", opts_regex = stri_opts_regex(case_insensitive = TRUE))
-      )
-
-    return(processed_links)
-
+    # Process the JSON response
+    if (http_type(stats_resp) == "application/json") {
+      json_data <- resp_body_json(stats_resp)
+      player_stats <- json_data$pageProps$pageData$competition$players
+      return(player_stats)
+    } else {
+      message("Request did not return JSON. Response type: ", http_type(stats_resp))
+      return(list())
+    }
   }, error = function(e) {
-    message("Error in link extraction: ", e$message)
-    return(tibble())
+    message("Error: ", e$message)
+    return(list())
   })
 }
-# Example Usage
-# premier_league_url <- "https://your-football-stats-website.com/premier-league-2023-24"
-# player_stats <- scrape_football_players_stats(premier_league_url)
-# print(player_stats)
-premier_league_url <- "https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024"
-player_stats <- extract_filtered_links(premier_league_url)
-player_stats %>%
-  select(clean_link) %>%
-  print(n=60)
+
+# Example usage
+competition_url <- "https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024"
+player_stats <- extract_player_stats_links(competition_url)
+
+# Example of how to access the data
+if (!is.null(player_stats)) {
+  for (player in player_stats) {
+    print(paste(player$name$fullName, ": Goals -", player$stats$main$goals$value))
+  }
+}
