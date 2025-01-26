@@ -2,144 +2,75 @@ library(tidyverse)
 library(rvest)
 library(httr)
 library(stringi)
-
-# Web Scraping Function for Football Player Statistics
-library(tidyverse)
-library(httr)
-library(stringi)
 library(xml2)
 
 # Web Scraping Function for Football Player Statistics
 scrape_football_players_stats <- function(competition_url) {
-  # Error handling wrapper
   tryCatch({
+    # Verbose logging function
+    verbose_log <- function(message) {
+      cat(message, "\n")
+    }
+
     # Step 1: Fetch the competition page
-    competition_response <- GET(competition_url)
+    verbose_log("Fetching competition page...")
+    competition_response <- GET(competition_url,
+                                add_headers(
+                                  `User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                                ))
     competition_content <- content(competition_response, "text", encoding = "UTF-8")
 
-    # Step 2: Extract stats link using string manipulation
-    stats_link <- stri_extract_first_regex(competition_content,
-                                           "href=[\"']([^\"']*stats[^\"']*)[\"']",
-                                           opts_regex = stri_opts_regex(case_insensitive = TRUE)) %>%
-      str_extract("(?<=\").*?(?=\")")
+    # Debugging: Print out the first 1000 characters of the content
+    verbose_log("First 1000 characters of page content:")
+    verbose_log(substr(competition_content, 1, 1000))
 
-    # Ensure absolute URL
-    if (is.na(stats_link)) stop("Could not find stats link")
-    if (!str_starts(stats_link, "http")) {
-      base_url <- urltools::url_parse(competition_url)$domain
-      stats_link <- paste0("https://", base_url, stats_link)
+    # Attempt to find links manually
+    verbose_log("Attempting to extract links...")
+    all_links <- stri_extract_all_regex(competition_content, "href=[\"']([^\"']+)[\"']")[[1]]
+
+    verbose_log("Found links:")
+    verbose_log(paste(all_links, collapse = "\n"))
+
+    # For FotMob, we might need to use a different approach
+    # Look for players or stats links
+    players_link_candidates <- all_links %>%
+      str_subset("players|stats") %>%
+      str_subset("premier-league", negate = FALSE)
+
+    verbose_log("Potential players link candidates:")
+    verbose_log(paste(players_link_candidates, collapse = "\n"))
+
+    # If no links found, stop and provide detailed error
+    if (length(players_link_candidates) == 0) {
+      stop("No players links found. Please check the URL or page structure.")
     }
 
-    # Step 3: Fetch stats page and get players stats link
-    stats_response <- GET(stats_link)
-    stats_content <- content(stats_response, "text", encoding = "UTF-8")
-
-    # Extract players stats link
-    players_stats_link <- stri_extract_first_regex(stats_content,
-                                                   "href=[\"']([^\"']*players[^\"']*)[\"']",
-                                                   opts_regex = stri_opts_regex(case_insensitive = TRUE)) %>%
+    # Select the first candidate link
+    players_stats_link <- players_link_candidates[1] %>%
       str_extract("(?<=\").*?(?=\")")
 
     # Ensure absolute URL
-    if (is.na(players_stats_link)) stop("Could not find players stats link")
     if (!str_starts(players_stats_link, "http")) {
-      base_url <- urltools::url_parse(stats_link)$domain
-      players_stats_link <- paste0("https://", base_url, players_stats_link)
+      players_stats_link <- paste0("https://www.fotmob.com", players_stats_link)
     }
 
-    # Step 4: Prepare for data collection
-    all_players_data <- list()
-    current_page <- 1
+    verbose_log(paste("Selected players stats link:", players_stats_link))
 
-    # Use slowly() for rate limiting
-    safe_get <- slowly(~{
-      Sys.sleep(runif(1, 1, 3))  # Random delay between 1-3 seconds
-      GET(.x)
-    }, rate = rate_delay(1, 1))
+    # Fetch players stats page
+    verbose_log("Fetching players stats page...")
+    players_stats_response <- GET(players_stats_link,
+                                  add_headers(
+                                    `User-Agent` = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                                  ))
+    players_stats_content <- content(players_stats_response, "text", encoding = "UTF-8")
 
-    # Function to extract table data using regex
-    extract_table_data <- function(content) {
-      # Split content into potential table rows
-      rows <- stri_split_regex(content, "(<tr[^>]*>|</tr>)")[[1]]
-
-      # Extract cell data
-      table_data <- lapply(rows, function(row) {
-        cells <- stri_extract_all_regex(row, "<td[^>]*>(.*?)</td>",
-                                        opts_regex = stri_opts_regex(case_insensitive = TRUE))
-        if (!is.null(cells[[1]])) {
-          # Clean cell contents
-          cleaned_cells <- lapply(cells[[1]], function(cell) {
-            # Remove HTML tags
-            clean_cell <- stri_replace_all_regex(cell, "<[^>]*>", "")
-            # Trim whitespace
-            clean_cell <- stri_trim_both(clean_cell)
-            return(clean_cell)
-          })
-          return(cleaned_cells)
-        }
-        return(NULL)
-      })
-
-      # Remove NULL and empty entries
-      table_data <- table_data[!sapply(table_data, is.null)]
-      table_data <- table_data[lengths(table_data) > 0]
-
-      # Convert to dataframe
-      if (length(table_data) > 0) {
-        df <- do.call(rbind, lapply(table_data, function(x) {
-          # Pad or truncate to ensure consistent length
-          x <- x[1:min(length(x), 10)]
-          x <- c(x, rep(NA, 10 - length(x)))
-          as.data.frame(t(x))
-        }))
-
-        # Use generic column names
-        names(df) <- paste0("V", 1:ncol(df))
-        return(df)
-      }
-
-      return(NULL)
-    }
-
-    # Pagination and data collection
-    repeat {
-      # Construct paginated URL
-      paginated_url <- paste0(players_stats_link, "?page=", current_page)
-
-      # Fetch page with rate limiting
-      page_response <- safe_get(paginated_url)
-      page_content <- content(page_response, "text", encoding = "UTF-8")
-
-      # Extract table data
-      current_table_data <- extract_table_data(page_content)
-
-      # Check if no more data
-      if (is.null(current_table_data) || nrow(current_table_data) == 0) {
-        break
-      }
-
-      # Store data
-      all_players_data[[length(all_players_data) + 1]] <- current_table_data
-
-      # Check for pagination (you may need to adjust this based on the specific website)
-      # This is a placeholder and might need customization
-      if (nrow(current_table_data) < 20) {  # Assuming 20 rows per page
-        break
-      }
-
-      current_page <- current_page + 1
-    }
-
-    # Step 5: Combine data
-    if (length(all_players_data) > 0) {
-      final_players_data <- bind_rows(all_players_data)
-      return(final_players_data)
-    }
+    # At this point, you'll need to adapt the rest of the scraping logic
+    # This is a placeholder - you'll need to customize based on the actual page structure
+    verbose_log("Placeholder for further processing")
 
     return(NULL)
 
   }, error = function(e) {
-    # Comprehensive error handling
     message("Error in scraping process: ", e$message)
     return(NULL)
   })
@@ -150,3 +81,5 @@ scrape_football_players_stats <- function(competition_url) {
 # player_stats <- scrape_football_players_stats(premier_league_url)
 # print(player_stats)
 premier_league_url <- "https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024"
+player_stats <- scrape_football_players_stats(premier_league_url)
+print(player_stats)
