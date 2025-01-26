@@ -5,7 +5,7 @@ library(stringi)
 library(xml2)
 
 # Web Scraping Function for Football Player Statistics
-extract_fotmob_links <- function(competition_url) {
+extract_all_links <- function(competition_url) {
   tryCatch({
     # Create a request object
     req <- request(competition_url) %>%
@@ -19,35 +19,20 @@ extract_fotmob_links <- function(competition_url) {
     # Get the content as text
     content <- resp_body_string(resp)
 
-    # Extract all links
+    # Extract ALL links using stringi
     all_links <- stri_extract_all_regex(content, "href=[\"']([^\"']+)[\"']")[[1]]
 
-    # Process links
-    processed_links <- tibble(link = all_links) %>%
-      # Extract actual link content
-      mutate(
-        clean_link = str_extract(link, "(?<=\").*?(?=\")"),
-        # Categorize links
-        is_stats = str_detect(clean_link, "leagues/47/stats/premier-league"),
-        is_players = str_detect(clean_link, "players"),
-        is_english = str_detect(clean_link, "en-GB"),
-        is_absolute = str_starts(clean_link, "http")
-      ) %>%
-      # Mutate to create full URLs
-      mutate(
-        full_url = case_when(
-          is_absolute ~ clean_link,
-          str_starts(clean_link, "/") ~ paste0("https://www.fotmob.com", clean_link),
-          TRUE ~ paste0("https://www.fotmob.com/", clean_link)
-        )
-      )
+    # Create a tibble with the links
+    processed_links <- tibble(
+      original_link = all_links,
+      clean_link = stri_extract_first_regex(all_links, "(?<=\").*?(?=\")")
+    )
 
-    # Return processed links
     return(processed_links)
 
   }, error = function(e) {
     message("Error in link extraction: ", e$message)
-    return(NULL)
+    return(tibble())
   })
 }
 
@@ -58,6 +43,5 @@ extract_fotmob_links <- function(competition_url) {
 premier_league_url <- "https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024"
 player_stats <- extract_fotmob_links(premier_league_url)
 player_stats %>%
-  filter(is_stats | is_players) %>%
-  select(full_url, is_english) %>%
-  print( n = 30)
+  select(full_url) %>%
+  print(n=50)
