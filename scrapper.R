@@ -1,6 +1,6 @@
 library(tidyverse)
 library(rvest)
-library(httr)
+library(httr2)
 library(stringi)
 library(xml2)
 
