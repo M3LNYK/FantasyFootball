@@ -5,7 +5,7 @@ library(stringi)
 library(xml2)
 
 # Web Scraping Function for Football Player Statistics
-extract_all_links <- function(competition_url) {
+extract_filtered_links <- function(competition_url) {
   tryCatch({
     # Create a request object
     req <- request(competition_url) %>%
@@ -26,7 +26,21 @@ extract_all_links <- function(competition_url) {
     processed_links <- tibble(
       original_link = all_links,
       clean_link = stri_extract_first_regex(all_links, "(?<=\").*?(?=\")")
-    )
+    ) %>%
+      # Filter out unwanted links
+      filter(
+        !stri_detect_regex(clean_link, "\\.css", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "/news", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "/transfers", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "android", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "twitter", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "facebook", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "careers", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "company", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "instagram", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "tiktok", opts_regex = stri_opts_regex(case_insensitive = TRUE)) &
+          !stri_detect_regex(clean_link, "faq", opts_regex = stri_opts_regex(case_insensitive = TRUE))
+      )
 
     return(processed_links)
 
@@ -35,13 +49,12 @@ extract_all_links <- function(competition_url) {
     return(tibble())
   })
 }
-
 # Example Usage
 # premier_league_url <- "https://your-football-stats-website.com/premier-league-2023-24"
 # player_stats <- scrape_football_players_stats(premier_league_url)
 # print(player_stats)
 premier_league_url <- "https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024"
-player_stats <- extract_fotmob_links(premier_league_url)
+player_stats <- extract_filtered_links(premier_league_url)
 player_stats %>%
-  select(full_url) %>%
-  print(n=50)
+  select(clean_link) %>%
+  print(n=60)
