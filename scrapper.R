@@ -1,9 +1,9 @@
 library(tidyverse)
 library(httr)
-library(stringi)
 library(jsonlite)
+library(stringi)
 
-extract_player_stats_links <- function(api_link) {
+extract_player_stats_links <- function(api_link, save_path = NULL) {
   tryCatch({
     # Make the GET request
     response <- GET(api_link,
@@ -17,26 +17,21 @@ extract_player_stats_links <- function(api_link) {
       # Parse JSON
       json_data <- fromJSON(json_text)
 
-      # Examine the structure
-      str(json_data)
+      # Save the raw JSON if path is provided
+      if (!is.null(save_path)) {
+        # Save as RDS (R object)
+        saveRDS(json_data, file = paste0(save_path, "_data.rds"))
 
-      # Print available top-level keys
-      cat("\nTop-level keys in JSON:\n")
-      print(names(json_data))
+        # Save as JSON file
+        write_json(json_data, path = paste0(save_path, "_data.json"), pretty = TRUE)
 
-      # Function to recursively explore nested lists
-      explore_nested <- function(data, prefix = "") {
-        if (is.list(data)) {
-          for (name in names(data)) {
-            cat(sprintf("%s%s\n", prefix, name))
-            explore_nested(data[[name]], paste0(prefix, "  "))
-          }
+        # Save as CSV if it's a data frame
+        if (is.data.frame(json_data)) {
+          write_csv(json_data, file = paste0(save_path, "_data.csv"))
         }
-      }
 
-      # Explore the nested structure
-      cat("\nNested structure:\n")
-      explore_nested(json_data)
+        cat(sprintf("Data saved to %s with different extensions\n", save_path))
+      }
 
       return(json_data)
     } else {
@@ -50,5 +45,10 @@ extract_player_stats_links <- function(api_link) {
 }
 
 # Usage example:
-api_link <- "https://www.fotmob.com/_next/data/uKh5nioc0sOEP3_mHPgRL/en/leagues/47/stats/premier-league/players.json?lng=en&id=47&tab=stats&slug=premier-league&slug=players"
-json_result <- extract_player_stats_links(api_link)
+api_link <- "https://www.fotmob.com/_next/data/bhtACeKZ4e_Lvxde8cpLT/en/leagues/47/stats/premier-league/players.json?lng=en&id=47&tab=stats&slug=premier-league&slug=players"
+
+# Save to current working directory
+json_result <- extract_player_stats_links(api_link, save_path = "player_stats")
+
+# Or save to specific path
+# json_result <- extract_player_stats_links(api_link, save_path = "C:/Users/YourName/Desktop/player_stats")
