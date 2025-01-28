@@ -22,12 +22,8 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
         cat(sprintf("Data saved to %s with different extensions\n", save_path))
       }
 
-      # data_frame %>% select(json_data$pageProps$stats$players$header, $fetchAllUrl)
-      # Testing stuff
-      # print(data_frame(json_data$pageProps$stats$players$header, $fetchAllUrl))
-      demo_df = json_data$pageProps$stats$players
-      # print(demo_df$fetchAllUrl)
-      print(subset(demo_df, select = c("header", "fetchAllUrl")))
+      df_name_link = json_data$pageProps$stats$players
+      print(subset(df_name_link, select = c("header", "fetchAllUrl")))
 
 
     } else {
@@ -45,7 +41,6 @@ time <- format(Sys.time(), "%Y%m%d_%H%M")
 base_path <- "Project/Main/temp/"
 path <- paste0(base_path, time)
 
-api_link_14 <-"https://www.fotmob.com/_next/data/XIZGn_V5s8J4GpjMVz7ts/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
 api_link_15 <-"https://www.fotmob.com/_next/data/XIZGn_V5s8J4GpjMVz7ts/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
 api_link <-"https://www.fotmob.com/_next/data/zcN7DSXE8djGgU4rVG_Jk/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
 # Get results
