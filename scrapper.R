@@ -22,10 +22,13 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
         cat(sprintf("Data saved to %s with different extensions\n", save_path))
       }
 
-      df_name_link = json_data$pageProps$stats$players
+      df_name_link <- json_data$pageProps$stats$players
+      print(colnames(df_name_link))
       print(subset(df_name_link, select = c("header", "fetchAllUrl")))
-
-
+      # print(df_name_link[2, ])
+      for (x in df_name_link){
+        # print(x)
+      }
     } else {
       stop(sprintf("API request failed with status code: %d", status_code(response)))
     }
