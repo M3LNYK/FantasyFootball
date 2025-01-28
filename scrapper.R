@@ -34,7 +34,7 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
       }
 
       # here I want to continue working
-      
+
 
 
       return(json_data)
@@ -49,13 +49,20 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
 }
 
 # Usage example:
-api_link <- "https://www.fotmob.com/_next/data/uKh5nioc0sOEP3_mHPgRL/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
-
 time <- format(Sys.time(), "%Y%m%d_%H%M")
 base_path <- "Project/Main/temp/"
 path <- paste0(base_path, time)
 
-# Save to current working directory
-json_result <- extract_player_stats_links(api_link, save_path = path)
-# Or save to specific path
-# json_result <- extract_player_stats_links(api_link, save_path = "C:/Users/YourName/Desktop/player_stats")
+api_link <- "https://www.fotmob.com/_next/data/uKh5nioc0sOEP3_mHPgRL/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
+
+# Save to directory and get results
+result <- extract_player_stats_links(api_link, save_path = path)
+
+# Access the JSON data
+json_data <- result$json_data
+
+# Access the extracted URLs
+urls_df <- result$urls
+
+# Print found URLs
+print(urls_df)
