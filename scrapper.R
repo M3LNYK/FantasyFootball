@@ -33,6 +33,10 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
         cat(sprintf("Data saved to %s with different extensions\n", save_path))
       }
 
+      # here I want to continue working
+      
+
+
       return(json_data)
     } else {
       stop(sprintf("API request failed with status code: %d", status_code(response)))
@@ -45,13 +49,13 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
 }
 
 # Usage example:
-api_link <- "https://www.fotmob.com/_next/data/uKh5nioc0sOEP3_mHPgRL/en/leagues/47/stats/premier-league/players.json?lng=en&id=47&tab=stats&slug=premier-league&slug=players"
+api_link <- "https://www.fotmob.com/_next/data/uKh5nioc0sOEP3_mHPgRL/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
 
-time <- Sys.Date()
-path <- "Project/Main/temp/"
+time <- format(Sys.time(), "%Y%m%d_%H%M")
+base_path <- "Project/Main/temp/"
+path <- paste0(base_path, time)
 
 # Save to current working directory
 json_result <- extract_player_stats_links(api_link, save_path = path)
-
 # Or save to specific path
 # json_result <- extract_player_stats_links(api_link, save_path = "C:/Users/YourName/Desktop/player_stats")
