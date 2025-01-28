@@ -19,16 +19,13 @@ extract_player_stats_links <- function(api_link, save_path = NULL) {
 
       # Save the raw JSON if path is provided
       if (!is.null(save_path)) {
-        # Save as RDS (R object)
-        saveRDS(json_data, file = paste0(save_path, "_data.rds"))
-
         # Save as JSON file
         write_json(json_data, path = paste0(save_path, "_data.json"), pretty = TRUE)
 
         # Save as CSV if it's a data frame
-        if (is.data.frame(json_data)) {
-          write_csv(json_data, file = paste0(save_path, "_data.csv"))
-        }
+        # if (is.data.frame(json_data)) {
+        #   write_csv(json_data, file = paste0(save_path, "_data.csv"))
+        # }
 
         cat(sprintf("Data saved to %s with different extensions\n", save_path))
       }
