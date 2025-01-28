@@ -1,6 +1,7 @@
 library(tidyverse)
 library(httr)
 library(stringi)
+library(jsonlite)
 
 extract_player_stats_links <- function(competition_url) {
   tryCatch({
