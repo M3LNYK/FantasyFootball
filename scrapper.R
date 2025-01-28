@@ -1,9 +1,6 @@
 library(tidyverse)
-library(rvest)  # Not used in this specific code, but might be helpful for future scraping
-library(httr2)
 library(httr)
 library(stringi)
-library(xml2)  # Not used in this specific code, but might be helpful for future scraping
 
 extract_player_stats_links <- function(competition_url) {
   tryCatch({
