@@ -21,6 +21,21 @@ extract_player_stats_links <- function(competition_url) {
       matching_divs <- stri_extract_all_regex(content_str,
                                               sprintf('<div[^>]*%s[^>]*>.*?</div>', class_pattern))
 
+      stats_page_css_pattern <- 'class="css-[a-zA-Z0-9]+-TLStatsPageCSS\\s+[a-zA-Z0-9]+"'
+
+      demo <- stri_extract_all_regex(matching_divs,
+                                     sprintf('<section[^>]*%s[^>]*>.*?</div>', stats_page_css_pattern))
+
+      print(demo)
+
+      # New regex pattern for "StatContainerCSS" divs
+      stat_container_pattern <- 'class="css-[a-zA-Z0-9]+-StatContainerCSS\\s+[a-zA-Z0-9]+"'
+
+      # Extract matching divs inside the previously found div
+      stat_containers <- stri_extract_all_regex(matching_divs[[1]],
+                                                sprintf('<div[^>]*%s[^>]*>.*?</div>', stat_container_pattern))
+
+      # print(stat_containers)
 
     } else {
       message(sprintf("Request failed with status code: %d", stats_req$status_code))
