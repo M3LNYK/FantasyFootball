@@ -10,45 +10,56 @@ extract_stats_table <- function(competition_url) {
     )
 
     if (stats_req$status_code == 200) {
-      content_str <- rawToChar(stats_req$content)
+      # Get content and decode if needed
+      # content_str <- rawToChar(stats_req$content)
+      content(stats_req) %>%
+        html_elements("span")
 
-      # Remove style tags first
-      content_no_style <- stri_replace_all_regex(
-        content_str,
-        '(?s)<style[^>]*>.*?</style>',
-        ''
-      )
 
-      # Patterns for both classes
-      patterns <- list(
-        # First class pattern (e15r3kn28)
-        pattern1 = '(?s)<[^>]*class="[^"]*e15r3kn28[^"]*"[^>]*>.*?<span[^>]*>(.*?)</span>',
-        # Second class pattern (e15r3kn26)
-        pattern2 = '(?s)<[^>]*class="[^"]*e15r3kn26[^"]*"[^>]*>(.*?)</[^>]*>'
-      )
-
-      # Extract elements for both patterns
-      for (name in names(patterns)) {
-        elements <- stri_extract_all_regex(content_no_style, patterns[[name]])[[1]]
-        cat(name, "elements found:", length(elements), "\n")
-        if (length(elements) > 0) {
-          cat("\nFirst few", name, "elements:\n")
-          for (i in 1:min(5, length(elements))) {
-            # Clean up the content (remove HTML tags)
-            clean_content <- stri_replace_all_regex(elements[i], "<[^>]+>", "")
-            clean_content <- stri_trim_both(clean_content)
-            cat(i, ":", clean_content, "\n")
-          }
-        }
-      }
-
-      return(NULL)
+      # Look for specific elements with our target classes
+      # class_patterns <- list(
+      #   stats = '(?s)<tr[^>]*class="[^"]*e15r3kn28[^"]*">(.*?)</tr>',
+      #   player = '(?s)<td[^>]*class="[^"]*e15r3kn26[^"]*">(.*?)</td>'
+      # )
+      #
+      # # Try to find matches for each pattern
+      # for (name in names(class_patterns)) {
+      #   matches <- stri_extract_all_regex(content_str, class_patterns[[name]])[[1]]
+      #   cat("\nFound", length(matches), name, "elements\n")
+      #
+      #   if (!is.null(matches) && length(matches) > 0 && !all(is.na(matches))) {
+      #     cat("First 3 matches:\n")
+      #     for (i in 1:min(3, length(matches))) {
+      #       # Clean up the content
+      #       clean_match <- stri_replace_all_regex(matches[i], "<[^>]+>", " ")
+      #       clean_match <- stri_trim_both(clean_match)
+      #       cat(i, ":", clean_match, "\n")
+      #     }
+      #   }
+      # }
+      #
+      # Also try to find any elements with these classes
+      # all_elements <- stri_extract_all_regex(
+      #   content_str,
+      #   '(?s)<[^>]*class="[^"]*(?:e15r3kn28|e15r3kn26)[^"]*"[^>]*>(.*?)</[^>]*>'
+      # )[[1]]
+      #
+      # cat("\nTotal elements with target classes:", length(all_elements), "\n")
+      # if (!is.null(all_elements) && length(all_elements) > 0 && !all(is.na(all_elements))) {
+      #   cat("First few elements found:\n")
+      #   for (i in 1:min(3, length(all_elements))) {
+      #     clean_element <- stri_replace_all_regex(all_elements[i], "<[^>]+>", " ")
+      #     clean_element <- stri_trim_both(clean_element)
+      #     cat(i, ":", clean_element, "\n")
+      #   }
+      # }
+      #
+      # return(NULL)
     } else {
       message(sprintf("Request failed with status code: %d", stats_req$status_code))
       return(NULL)
     }
-
-  }, error = function(e) {
+  } error = function(e) {
     message("Error: ", e$message)
     return(NULL)
   })
