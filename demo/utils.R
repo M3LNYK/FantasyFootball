@@ -10,7 +10,7 @@ create_basic_headers <- function() {
     "Accept" = "application/json",
     "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept-Language" = "en-US,en;q=0.9",
-    "Accept-Encoding" = "gzip, deflate, br",
+    "Accept-Encoding" = "gzip, deflate",  # Explicitly specify supported encodings
     "Referer" = "https://www.fotmob.com/",
     "Origin" = "https://www.fotmob.com"
   )
@@ -32,6 +32,10 @@ fetch_data <- function(url, retry_count = 3, delay = 2) {
       Sys.sleep(delay)  # Add delay between retries
       response <- GET(url, add_headers(create_basic_headers()))
 
+      # Debugging: Print response headers
+      cat("Response headers:\n")
+      print(response$headers)
+
       if (status_code(response) == 200) {
         cat("Successfully fetched data from:", url, "\n")
         return(response)
@@ -52,7 +56,8 @@ fetch_data <- function(url, retry_count = 3, delay = 2) {
 #' @return Parsed JSON data
 parse_json_response <- function(response) {
   tryCatch({
-    content <- rawToChar(response$content)  # Convert raw content to character
+    # Use httr::content() to automatically handle decompression
+    content <- content(response, as = "text", encoding = "UTF-8")
     fromJSON(content)  # Parse JSON
   }, error = function(e) {
     cat("Error parsing JSON:", e$message, "\n")
