@@ -18,24 +18,21 @@ extract_player_stats_links <- function(competition_url) {
       class_pattern <- 'class="css-[a-zA-Z0-9]+-Column\\s+[a-zA-Z0-9]+"'
 
       # Extract divs with this class pattern using stringi
-      matching_divs <- stri_extract_all_regex(content_str,
-                                              sprintf('<div[^>]*%s[^>]*>.*?</div>', class_pattern))
+      # matching_divs <- stri_extract_all_regex(content_str,
+      #                                         sprintf('<div[^>]*%s[^>]*>.*?</div>', class_pattern))
+      #
+      # print(matching_divs)
 
-      stats_page_css_pattern <- 'class="css-[a-zA-Z0-9]+-TLStatsPageCSS\\s+[a-zA-Z0-9]+"'
+      # Regex pattern for divs with CardCSS
+      card_css_pattern <- 'class="css-[a-zA-Z0-9]+-CardCSS\\s+[a-zA-Z0-9]+"'
 
-      demo <- stri_extract_all_regex(matching_divs,
-                                     sprintf('<section[^>]*%s[^>]*>.*?</div>', stats_page_css_pattern))
+      # Extract all <div> elements with the matching class pattern
+      matching_card_divs <- stri_extract_all_regex(content_str,
+                                                   sprintf('<div[^>]*%s[^>]*>.*?</div>', card_css_pattern))
 
-      print(demo)
+      # Print results for debugging
+      print(matching_card_divs)
 
-      # New regex pattern for "StatContainerCSS" divs
-      stat_container_pattern <- 'class="css-[a-zA-Z0-9]+-StatContainerCSS\\s+[a-zA-Z0-9]+"'
-
-      # Extract matching divs inside the previously found div
-      stat_containers <- stri_extract_all_regex(matching_divs[[1]],
-                                                sprintf('<div[^>]*%s[^>]*>.*?</div>', stat_container_pattern))
-
-      # print(stat_containers)
 
     } else {
       message(sprintf("Request failed with status code: %d", stats_req$status_code))
