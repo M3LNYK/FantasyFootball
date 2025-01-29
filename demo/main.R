@@ -8,9 +8,8 @@ library(stringi)
 #' @param file_path Path to the debug RDS file
 #' @return Processed data frame
 process_debug_file <- function(file_path) {
-  # Extract stat name from file name
-  stat_name <- str_remove(basename(file_path), "debug_")
-  stat_name <- str_remove(stat_name, "\\.rds$")
+  # Extract stat name from file name using stringi
+  stat_name <- stri_replace_all_regex(basename(file_path), "debug_|\\.rds$", "")
 
   cat("\nProcessing stat:", stat_name, "\n")
 
@@ -101,7 +100,6 @@ process_all_debug_files <- function() {
 }
 
 #' Save results to CSV
-#' Save results to CSV with specific path
 #' @param data Data frame to save
 #' @param base_path Base path for saving the file
 #' @return Path to the saved file
@@ -122,55 +120,34 @@ save_to_csv <- function(data, base_path = "Project/Main/temp/data") {
   filename <- file.path(base_path, sprintf("player_stats_%s.csv", timestamp))
 
   # Save the file
-  tryCatch({
-    write_csv(data, filename)
-    cat("\nData saved successfully to:", filename, "\n")
-    cat("File size:", file.size(filename), "bytes\n")
-
-    # Verify file was created
-    if (!file.exists(filename)) {
-      stop("File was not created successfully")
-    }
-
-  }, error = function(e) {
-    cat("\nError saving file:", e$message, "\n")
-    cat("Current working directory:", getwd(), "\n")
-    return(NULL)
-  })
-
+  write_csv(data, filename)
+  cat("\nData saved successfully to:", filename, "\n")
   return(filename)
 }
 
-# At the end of your main script, modify the saving part:
+# Process all debug files
+cat("\n=== Processing Debug Files ===\n")
+result <- process_all_debug_files()
+
 if (!is.null(result)) {
   cat("\n=== Results Summary ===\n")
   cat("Number of players:", nrow(result), "\n")
-  cat("Number of statistics:", ncol(result) - 3, "\n")
+  cat("Number of statistics:", ncol(result) - 3, "\n") # Excluding basic columns
 
-  # Save with specific path
-  saved_file <- save_to_csv(result, base_path = "Project/Main/temp/data")
+  cat("\nColumns in final dataset:\n")
+  print(names(result))
 
-  if (!is.null(saved_file)) {
-    # Verify saved data
-    cat("\nVerifying saved data...\n")
-    if (file.exists(saved_file)) {
-      verified_data <- read_csv(saved_file)
-      cat("Verified rows:", nrow(verified_data), "\n")
-      cat("Verified columns:", ncol(verified_data), "\n")
+  cat("\nFirst few rows:\n")
+  print(head(result))
 
-      # Show the actual file location
-      cat("\nFile location details:\n")
-      cat("Absolute path:", normalizePath(saved_file), "\n")
-      cat("Directory contents:\n")
-      print(list.files(dirname(saved_file)))
-    } else {
-      cat("Warning: File was not found after saving\n")
-    }
-  }
+  # Save to CSV
+  saved_file <- save_to_csv(result)
+
+  # Verify saved data
+  cat("\nVerifying saved data...\n")
+  verified_data <- read_csv(saved_file)
+  cat("Verified rows:", nrow(verified_data), "\n")
+  cat("Verified columns:", ncol(verified_data), "\n")
 } else {
   cat("No results produced\n")
 }
-
-# Add this at the end to help debug path issues
-cat("\nCurrent working directory:", getwd(), "\n")
-cat("Path exists check:", dir.exists("Project/Main/temp/data"), "\n")
