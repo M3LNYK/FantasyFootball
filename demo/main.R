@@ -4,81 +4,66 @@ library(httr)
 library(jsonlite)
 library(stringi)
 
-#' Process single stat file
-#' @param file_path Path to the debug RDS file
-#' @return Processed data frame
-process_debug_file <- function(file_path) {
-  # Extract stat name from file name using stringi
-  stat_name <- stri_replace_all_regex(basename(file_path), "debug_|\\.rds$", "")
+# Load utility functions
+source("Project\\Main\\demo\\utils.R")
+source("Project\\Main\\demo\\stats_processor.R")
 
-  cat("\nProcessing stat:", stat_name, "\n")
-
-  # Read the debug file
-  data <- readRDS(file_path)
-
-  # Extract the StatList data
-  if (!is.null(data$TopLists$StatList[[1]])) {
-    stats_df <- data$TopLists$StatList[[1]] %>%
-      as_tibble()
-
-    cat("Available columns:", paste(names(stats_df), collapse = ", "), "\n")
-
-    # Select and rename columns
-    stats_df <- stats_df %>%
-      select(
-        ParticipantName,
-        ParticiantId,
-        TeamName,
-        MinutesPlayed,
-        MatchesPlayed,
-        StatValue,
-        SubStatValue
-      ) %>%
-      rename(
-        player_id = ParticiantId,
-        !!sym(stat_name) := StatValue,
-        !!paste0(stat_name, "_subtitle") := SubStatValue
-      ) %>%
-      # Convert to numeric
-      mutate(
-        across(c(!!sym(stat_name),
-                 !!sym(paste0(stat_name, "_subtitle")),
-                 MinutesPlayed,
-                 MatchesPlayed),
-               ~as.numeric(as.character(.)))
-      )
-
-    cat("Processed", nrow(stats_df), "records\n")
-    return(stats_df)
+#' Main function to fetch and process all statistics
+#' @param api_url URL of the main JSON
+#' @return Combined data frame of all statistics
+process_all_stats <- function(api_url) {
+  # Step 1: Fetch the main JSON
+  main_response <- fetch_data(api_url)
+  if (is.null(main_response)) {
+    cat("Failed to fetch main JSON\n")
+    return(NULL)
   }
 
-  NULL
-}
+  main_json <- parse_json_response(main_response)
+  if (is.null(main_json)) {
+    cat("Failed to parse main JSON\n")
+    return(NULL)
+  }
 
-#' Combine all debug files into one dataset
-process_all_debug_files <- function() {
-  # Get all debug files
-  debug_files <- list.files(pattern = "debug_.*\\.rds", full.names = TRUE)
-  cat("Found", length(debug_files), "debug files to process\n")
+  # Step 2: Extract statistic URLs and titles
+  stats <- main_json$pageProps$stats$players
+  stat_urls <- stats$fetchAllUrl
+  stat_titles <- stats$header
 
-  # Initialize empty list to store all data frames
+  # Step 3: Initialize empty list to store all data frames
   all_dfs <- list()
 
-  # Process all files
-  for (file in debug_files) {
-    df <- process_debug_file(file)
+  # Step 4: Fetch and process each statistic
+  for (i in seq_along(stat_urls)) {
+    url <- stat_urls[i]
+    title <- stri_replace_all_regex(stat_titles[i], "\\s+", "_")
+
+    cat("\nProcessing stat:", title, "\n")
+
+    response <- fetch_data(url)
+    if (is.null(response)) {
+      cat("Failed to fetch data for", title, "\n")
+      next
+    }
+
+    stat_data <- parse_json_response(response)
+    if (is.null(stat_data)) {
+      cat("Failed to parse data for", title, "\n")
+      next
+    }
+
+    df <- process_stat_data(stat_data, title)
     if (!is.null(df)) {
       all_dfs[[length(all_dfs) + 1]] <- df
     }
   }
 
+  # Step 5: Combine all data frames
   if (length(all_dfs) == 0) {
     cat("No data frames were processed\n")
     return(NULL)
   }
 
-  # Combine all data frames
-  cat("\nCombining all statistics...\n")
   combined_df <- all_dfs %>%
     reduce(function(x, y) {
       full_join(
@@ -88,7 +73,7 @@ process_all_debug_files <- function() {
       )
     })
 
-  # Final cleanup
+  # Step 6: Final cleanup
   final_df <- combined_df %>%
     arrange(player_id) %>%
     mutate(across(where(is.numeric), ~replace_na(., 0)))
@@ -99,35 +84,13 @@ process_all_debug_files <- function() {
   return(final_df)
 }
 
-#' Save results to CSV
-#' @param data Data frame to save
-#' @param base_path Base path for saving the file
-#' @return Path to the saved file
-save_to_csv <- function(data, base_path = "Project/Main/temp/data") {
-  # Create full path if it doesn't exist
-  if (!dir.exists(base_path)) {
-    dir.create(base_path, recursive = TRUE)
-    cat("\nCreated directory:", base_path, "\n")
-  }
+# API URL
+api_url <- "https://www.fotmob.com/_next/data/zcN7DSXE8djGgU4rVG_Jk/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
+api_url <- "https://www.fotmob.com/_next/data/N1P1Woq7NeGHTBddylp3m/en/leagues/47/stats/premier-league/players.json?season=2023-2024&lng=en&id=47&tab=stats&slug=premier-league&slug=players"
 
-  # Verify path exists
-  if (!dir.exists(base_path)) {
-    stop("Failed to create or access directory:", base_path)
-  }
-
-  # Create filename with timestamp
-  timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
-  filename <- file.path(base_path, sprintf("player_stats_%s.csv", timestamp))
-
-  # Save the file
-  write_csv(data, filename)
-  cat("\nData saved successfully to:", filename, "\n")
-  return(filename)
-}
-
-# Process all debug files
-cat("\n=== Processing Debug Files ===\n")
-result <- process_all_debug_files()
+# Process all statistics
+cat("\n=== Fetching and Processing All Statistics ===\n")
+result <- process_all_stats(api_url)
 
 if (!is.null(result)) {
   cat("\n=== Results Summary ===\n")
