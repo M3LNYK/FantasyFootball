@@ -1,6 +1,6 @@
 library(tidyverse)
 library(httr)
-library(stringr)
+library(stringi)
 
 extract_player_stats_links <- function(competition_url) {
   tryCatch({
@@ -14,10 +14,12 @@ extract_player_stats_links <- function(competition_url) {
       # Convert content to text
       content_str <- rawToChar(stats_req$content)
 
-      # Extract meta tags
-      # Get specific div with class
-      divs <- str_extract_all(content_str, '<div[^>]*>.*?</div>')
-      print(divs)
+      # Pattern to match css-[alphanumeric]-Column [alphanumeric]
+      class_pattern <- 'class="css-[a-zA-Z0-9]+-Column\\s+[a-zA-Z0-9]+"'
+
+      # Extract divs with this class pattern using stringi
+      matching_divs <- stri_extract_all_regex(content_str,
+                                              sprintf('<div[^>]*%s[^>]*>.*?</div>', class_pattern))
 
 
     } else {
