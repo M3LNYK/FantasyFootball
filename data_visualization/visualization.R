@@ -28,7 +28,7 @@ ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
   # Add theme
   theme_minimal()
 
-data_player$`Expected_assist_(xA)`
+# Assists vs xA
 ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
   # Add points
   geom_point(color = "green", alpha = 0.6) +
@@ -52,7 +52,6 @@ ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
   theme_minimal()
 
 # Top scorrers by team
-# Second version - Enhanced bar plot with colors and formatting
 ggplot(
   data_player %>%
     group_by(TeamName) %>%
@@ -159,3 +158,34 @@ ggplot(data_player,
     legend.position = "none"
   )
 
+# Stacked Bar Chart for Cards
+ggplot(
+  data_player %>%
+    # Filter out NA TeamName before grouping
+    filter(!is.na(TeamName)) %>%
+    group_by(TeamName) %>%
+    summarise(
+      Yellow = sum(Yellow_cards, na.rm = TRUE),
+      Red = sum(Red_cards, na.rm = TRUE)
+    ) %>%
+    pivot_longer(cols = c(Yellow, Red),
+                 names_to = "Card_Type",
+                 values_to = "Count"),
+  aes(x = reorder(TeamName, -Count), y = Count, fill = Card_Type)
+) +
+  geom_bar(stat = "identity", position = "stack") +
+  coord_flip() +
+  scale_fill_manual(values = c("Red" = "red", "Yellow" = "yellow")) +
+  labs(
+    title = "Distribution of Cards by Team",
+    x = "Team",
+    y = "Number of Cards",
+    fill = "Card Type"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text.y = element_text(size = 10)
+  ) +
+  geom_text(aes(label = Count),
+            position = position_stack(vjust = 0.5))
