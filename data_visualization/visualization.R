@@ -16,25 +16,19 @@ ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
       filter(Top_scorer > 12 & `Expected_goals_(xG)` > 7),
     aes(label = ParticipantName),
     size = 3,
-    box.padding = 0.5,
-    point.padding = 0.5,
     check_overlap = T
   ) +
-  # Add title and axis labels
   labs(
-    title = "Goals Scored vs Expected Goals (xG) per Season",
-    x = "Goals Scored",
-    y = "Expected Goals (xG)"
+    title = "Goals scored vs Expected goals (xG) per Season",
+    x = "Goals scored",
+    y = "Expected goals (xG)"
   ) +
-  # Add theme
   theme_minimal()
 
 # Assists vs xA
 ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
-  # Add points
   geom_point(color = "green", alpha = 0.6) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
-  # Add labels for filtered data
   geom_text(
     data = data_player %>%
       filter(Assists > 9 & `Expected_assist_(xA)` > 4),
@@ -44,13 +38,11 @@ ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
     point.padding = 0.5,
     check_overlap = T
   ) +
-  # Add title and axis labels
   labs(
-    title = "Assists vs Expected Assists (xA) per Season",
+    title = "Assists vs Expected assists (xA) per Season",
     x = "Assists",
-    y = "Expected Assists (xA)"
+    y = "Expected assists (xA)"
   ) +
-  # Add theme
   theme_minimal()
 
 # Top scorrers by team
@@ -73,9 +65,9 @@ ggplot(
     size = 3
   ) +
   labs(
-    title = "Total Goals Scored by Team",
+    title = "Total goals scored by Team",
     x = "Teams",
-    y = "Total Goals",
+    y = "Total goals",
     fill = "Goals"
   ) +
   theme_minimal() +
@@ -100,10 +92,9 @@ ggplot(
     size = 3
   ) +
   labs(
-    title = "Top 15 Players by Assists",
-    subtitle = "Premier League 2023/24 Season",
+    title = "Top 15 players by assists",
     x = "",
-    y = "Number of Assists",
+    y = "Assists",
     fill = "Team"
   ) +
   theme_minimal() +
@@ -125,10 +116,9 @@ ggplot(data_player, aes(x = reorder(TeamName, FotMob_rating, median),
   geom_boxplot(fill = "lightblue") +
   coord_flip() +  # Horizontal orientation for better readability
   labs(
-    title = "Distribution of FotMob Ratings by Team",
-    subtitle = "Premier League 2023/24 Season",
+    title = "Distribution of FotMob ratings by team",
     x = "",
-    y = "FotMob Rating"
+    y = "FotMob rating"
   ) +
   theme_minimal()
 
@@ -136,19 +126,17 @@ ggplot(data_player, aes(x = reorder(TeamName, FotMob_rating, median),
 ggplot(data_player,
        aes(x = reorder(TeamName, FotMob_rating, median),
            y = FotMob_rating)) +
-  # Add box plot
   geom_boxplot(aes(fill = TeamName), alpha = 0.7) +
   # Add mean points
   stat_summary(fun = mean, geom = "point", shape = 23, size = 3,
                fill = "white") +
-  # Add labels for median values
   stat_summary(fun = median,
                geom = "text",
                aes(label = sprintf("%.1f", ..y..)),
                vjust = -0.5) +
   coord_flip() +
   labs(
-    title = "Distribution of FotMob Ratings by Team",
+    title = "Distribution of FotMob ratings by team",
     subtitle = "Premier League 2023/24 Season\nWhite diamonds show mean values",
     x = "",
     y = "FotMob Rating"
