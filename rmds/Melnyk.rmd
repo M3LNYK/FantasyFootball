@@ -86,14 +86,20 @@ The following diagram illustrates the relationships between the files:
 ## Libraries Used
 The following R libraries were used to implement the data collection process:
 
-```r
+```{r}
 library(tidyverse)  # Collection of data manipulation packages
 library(httr)       # HTTP request handling
 library(jsonlite)   # JSON parsing and manipulation
 library(stringi)    # String manipulation
+
+# Used for plotting
+library(tidyverse)
+library(ggplot2)
+library(fmsb)
 ```
 
 These libraries were chosen for their efficiency and ease of use in handling web scraping, JSON parsing, and data manipulation tasks.
+
 ## Key Functions
 
 ### Utils.R Functions
@@ -228,54 +234,48 @@ merge_stats <- function(existing_df, new_df) {
  - Handle missing values consistently.
  - Maintain data integrity during merging.
 
+### Output Example
+
+Here is how my data looked like:
+```{r}
+# data_player <- read_csv("Project/Main/temp/data/player_stats_20250130_010255.csv")
+data_player <- read_csv("E:/UNI_stuff/2-sem/Web Scraping/Project/Main/temp/data/player_stats_20250130_010255.csv")
+
+glimpse(data_player)
+```
+
 ---
 
 # Data Analysis
 
-## Methods Used
+In this section, we analyze the collected data to uncover patterns, trends, and insights into player and team performance. The visualizations below highlight key aspects of the data, such as expected vs. actual performance, top-performing players, and team-level statistics.
 
-```mermaid
-graph TD
-    A[main.R] --> B[stats_processor.R]
-    A --> C[utils.R]
-    B --> C
-    D[test_script.R] --> B
-    D --> C
-```
+## Goals vs. Expected Goals (xG)
 
-The analysis focused on exploring the relationships between various player statistics and identifying key performance indicators. The following methods were applied:
+Expected Goals (xG) is a key metric in football analytics that estimates the likelihood of a shot resulting in a goal. Comparing actual goals scored with xG provides insights into a player's finishing ability and whether they are overperforming or underperforming relative to expectations.
 
-- Descriptive statistics to summarize the data.
-- Correlation analysis to identify relationships between variables.
-- Visualization techniques to present findings.
-
-### Example Analysis Code
-
-```r
-library(ggplot2)
-
-# Summary statistics
-summary(football_data)
-
-# Correlation between goals and assists
-cor(football_data$Goals, football_data$Assists, use = "complete.obs")
-
-# Visualization: Goals vs. Assists
-ggplot(football_data, aes(x = Goals, y = Assists)) +
-  geom_point(color = "blue") +
+```{r}
+# Code used for Goals vs xG plot
+ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  geom_text(
+    data = data_player %>%
+      filter(Top_scorer > 12 & `Expected_goals_(xG)` > 7),
+    aes(label = ParticipantName),
+    size = 3,
+    check_overlap = T
+  ) +
   labs(
-    title = "Goals vs. Assists",
+    title = "Goals Scored vs Expected Goals (xG) per Season",
     x = "Goals Scored",
-    y = "Assists"
+    y = "Expected Goals (xG)"
   ) +
   theme_minimal()
+
 ```
 
-### Findings
 
-- **Top Performers**: The players with the highest goals and assists were identified.
-- **Correlation**: A positive correlation was observed between goals and assists, indicating that players who score more goals also tend to provide more assists.
-- **Team Analysis**: Teams with higher average player statistics were identified as top-performing teams.
 
 ---
 

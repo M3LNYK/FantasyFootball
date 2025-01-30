@@ -1290,14 +1290,16 @@ Players’ Statistics</a></h2>
       Responsibilities:</a></li>
       <li><a href="#file-relationships" id="toc-file-relationships"><span class="toc-section-number">2.3</span> File Relationships:</a></li>
       <li><a href="#libraries-used" id="toc-libraries-used"><span class="toc-section-number">2.4</span> Libraries Used</a></li>
-      <li><a href="#data-transformation-process" id="toc-data-transformation-process"><span class="toc-section-number">2.5</span> Data Transformation
+      <li><a href="#key-functions" id="toc-key-functions"><span class="toc-section-number">2.5</span> Key Functions</a></li>
+      <li><a href="#data-transformation-process" id="toc-data-transformation-process"><span class="toc-section-number">2.6</span> Data Transformation
       Process</a></li>
-      <li><a href="#joiningmerging-strategy" id="toc-joiningmerging-strategy"><span class="toc-section-number">2.6</span> Joining/Merging
+      <li><a href="#joiningmerging-strategy" id="toc-joiningmerging-strategy"><span class="toc-section-number">2.7</span> Joining/Merging
       Strategy</a></li>
       </ul></li>
       <li><a href="#data-analysis" id="toc-data-analysis"><span class="toc-section-number">3</span> Data Analysis</a>
       <ul>
-      <li><a href="#methods-used" id="toc-methods-used"><span class="toc-section-number">3.1</span> Methods Used</a></li>
+      <li><a href="#goals-vs.-expected-goals-xg" id="toc-goals-vs.-expected-goals-xg"><span class="toc-section-number">3.1</span> Goals vs. Expected Goals
+      (xG)</a></li>
       </ul></li>
       <li><a href="#conclusion" id="toc-conclusion"><span class="toc-section-number">4</span> Conclusion</a></li>
       <li><a href="#references" id="toc-references"><span class="toc-section-number">5</span> References</a></li>
@@ -1448,89 +1450,113 @@ functions for the other scripts.</p>
 <h2><span class="header-section-number">2.4</span> Libraries Used</h2>
 <p>The following R libraries were used to implement the data collection
 process:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>  <span class="fu">library</span>(tidyverse)  <span class="co"># Collection of data manipulation packages</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">library</span>(httr)       <span class="co"># HTTP request handling</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">library</span>(jsonlite)   <span class="co"># JSON parsing and manipulation</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">library</span>(stringi)    <span class="co"># String manipulation</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># Collection of data manipulation packages</span></span></code></pre></div>
+<pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.4     ✔ readr     2.1.5
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+## ✔ purrr     1.0.2     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(httr)       <span class="co"># HTTP request handling</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">library</span>(jsonlite)   <span class="co"># JSON parsing and manipulation</span></span></code></pre></div>
+<pre><code>## 
+## Dołączanie pakietu: &#39;jsonlite&#39;
+## 
+## Następujący obiekt został zakryty z &#39;package:purrr&#39;:
+## 
+##     flatten</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(stringi)    <span class="co"># String manipulation</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co"># Used for plotting</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">library</span>(fmsb)</span></code></pre></div>
+<pre><code>## Warning: pakiet &#39;fmsb&#39; został zbudowany w wersji R 4.4.2</code></pre>
 <p>These libraries were chosen for their efficiency and ease of use in
-handling web scraping, JSON parsing, and data manipulation tasks. ## Key
-Functions</p>
-<div id="utils.r-functions" class="section level3" number="2.4.1">
-<h3><span class="header-section-number">2.4.1</span> Utils.R
+handling web scraping, JSON parsing, and data manipulation tasks.</p>
+</div>
+<div id="key-functions" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Key Functions</h2>
+<div id="utils.r-functions" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Utils.R
 Functions</h3>
 <p>The <code>utils.R</code> file contains utility functions that handle
 HTTP requests, JSON parsing, and other basic operations. Below are some
 of the key functions:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">#&#39; Create basic headers for HTTP requests</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">create_basic_headers</span>()</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Purpose: Creates standardized headers for API requests</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># Returns: List of HTTP headers</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&#39; Fetch data from URL with retry logic</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">fetch_data</span>(url, <span class="at">retry_count =</span> <span class="dv">3</span>, <span class="at">delay =</span> <span class="dv">2</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># Purpose: Makes HTTP GET requests with retry mechanism</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co"># Parameters:</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#   - url: API endpoint URL</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#   - retry_count: Number of retry attempts</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#   - delay: Delay between retries in seconds</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co"># Returns: HTTP response or NULL</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&#39; Parse JSON response</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">parse_json_response</span>(response)</span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co"># Purpose: Converts HTTP response to JSON object</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co"># Parameters:</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#   - response: HTTP response object</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co"># Returns: Parsed JSON data</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&#39; Create basic headers for HTTP requests</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">create_basic_headers</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># Purpose: Creates standardized headers for API requests</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co"># Returns: List of HTTP headers</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&#39; Fetch data from URL with retry logic</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="fu">fetch_data</span>(url, <span class="at">retry_count =</span> <span class="dv">3</span>, <span class="at">delay =</span> <span class="dv">2</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># Purpose: Makes HTTP GET requests with retry mechanism</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#   - url: API endpoint URL</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#   - retry_count: Number of retry attempts</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#   - delay: Delay between retries in seconds</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co"># Returns: HTTP response or NULL</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&#39; Parse JSON response</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="fu">parse_json_response</span>(response)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co"># Purpose: Converts HTTP response to JSON object</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#   - response: HTTP response object</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co"># Returns: Parsed JSON data</span></span></code></pre></div>
 </div>
-<div id="stats-processor-functions" class="section level3" number="2.4.2">
-<h3><span class="header-section-number">2.4.2</span> Stats Processor
+<div id="stats-processor-functions" class="section level3" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Stats Processor
 Functions</h3>
 <p>The <code>stats_processor.R</code> file contains functions for
 processing and transforming raw statistics data. Key functions
 include:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#&#39; Process single statistic data</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">process_stat_data</span>(stat_data, stat_title)</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Purpose: Transforms raw stat data into structured format</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Parameters:</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#   - stat_data: Raw JSON data for a statistic</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># Returns: Processed data frame</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="fu">merge_stats</span>(existing_df, new_df, stat_title)</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># Purpose: Combines multiple statistics while handling duplicates</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># Parameters:</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#   - existing_df: Current combined data frame</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#   - new_df: New statistics to merge</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># Returns: Merged data frame</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#&#39; Process single statistic data</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">process_stat_data</span>(stat_data, stat_title)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># Purpose: Transforms raw stat data into structured format</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#   - stat_data: Raw JSON data for a statistic</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co"># Returns: Processed data frame</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="fu">merge_stats</span>(existing_df, new_df, stat_title)</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co"># Purpose: Combines multiple statistics while handling duplicates</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#   - existing_df: Current combined data frame</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#   - new_df: New statistics to merge</span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co"># Returns: Merged data frame</span></span></code></pre></div>
 </div>
 </div>
-<div id="data-transformation-process" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Data Transformation
+<div id="data-transformation-process" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Data Transformation
 Process</h2>
 <p>The data collection and transformation process consists of the
 following steps:</p>
-<div id="step-1-initial-data-fetch" class="section level3" number="2.5.1">
-<h3><span class="header-section-number">2.5.1</span> Step 1: Initial
+<div id="step-1-initial-data-fetch" class="section level3" number="2.6.1">
+<h3><span class="header-section-number">2.6.1</span> Step 1: Initial
 Data Fetch</h3>
 <p>The main JSON file containing links to individual statistics is
 fetched using the fetch_data() function:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Fetch main JSON containing links to individual statistics</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>main_json <span class="ot">&lt;-</span> <span class="fu">fetch_data</span>(api_url) <span class="sc">%&gt;%</span> <span class="fu">parse_json_response</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Fetch main JSON containing links to individual statistics</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>main_json <span class="ot">&lt;-</span> <span class="fu">fetch_data</span>(api_url) <span class="sc">%&gt;%</span> <span class="fu">parse_json_response</span>()</span></code></pre></div>
 </div>
-<div id="step-2-extract-statistics-links" class="section level3" number="2.5.2">
-<h3><span class="header-section-number">2.5.2</span> Step 2: Extract
+<div id="step-2-extract-statistics-links" class="section level3" number="2.6.2">
+<h3><span class="header-section-number">2.6.2</span> Step 2: Extract
 Statistics Links</h3>
 <p>The JSON response is parsed to extract URLs and titles for individual
 statistics:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Extract URLs and titles for individual statistics</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>stats <span class="ot">&lt;-</span> main_json<span class="sc">$</span>pageProps<span class="sc">$</span>stats<span class="sc">$</span>players</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>stat_urls <span class="ot">&lt;-</span> stats<span class="sc">$</span>fetchAllUrl</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>stat_titles <span class="ot">&lt;-</span> stats<span class="sc">$</span>header</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Extract URLs and titles for individual statistics</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>stats <span class="ot">&lt;-</span> main_json<span class="sc">$</span>pageProps<span class="sc">$</span>stats<span class="sc">$</span>players</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>stat_urls <span class="ot">&lt;-</span> stats<span class="sc">$</span>fetchAllUrl</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>stat_titles <span class="ot">&lt;-</span> stats<span class="sc">$</span>header</span></code></pre></div>
 </div>
-<div id="step-3-process-individual-statistics" class="section level3" number="2.5.3">
-<h3><span class="header-section-number">2.5.3</span> Step 3: Process
+<div id="step-3-process-individual-statistics" class="section level3" number="2.6.3">
+<h3><span class="header-section-number">2.6.3</span> Step 3: Process
 Individual Statistics</h3>
 <p>Each statistic is processed using the following steps:</p>
 <ol style="list-style-type: decimal">
@@ -1542,8 +1568,8 @@ Individual Statistics</h3>
 <li>Convert data types for consistency.</li>
 </ol>
 </div>
-<div id="step-4-data-cleaning" class="section level3" number="2.5.4">
-<h3><span class="header-section-number">2.5.4</span> Step 4: Data
+<div id="step-4-data-cleaning" class="section level3" number="2.6.4">
+<h3><span class="header-section-number">2.6.4</span> Step 4: Data
 Cleaning</h3>
 <p>The processed data is cleaned to ensure consistency and accuracy:</p>
 <ol style="list-style-type: decimal">
@@ -1554,13 +1580,13 @@ Cleaning</h3>
 </ol>
 </div>
 </div>
-<div id="joiningmerging-strategy" class="section level2" number="2.6">
-<h2><span class="header-section-number">2.6</span> Joining/Merging
+<div id="joiningmerging-strategy" class="section level2" number="2.7">
+<h2><span class="header-section-number">2.7</span> Joining/Merging
 Strategy</h2>
 <p>To combine multiple statistics into a single dataset, a robust
 merging strategy was implemented:</p>
-<div id="key-concepts" class="section level3" number="2.6.1">
-<h3><span class="header-section-number">2.6.1</span> Key Concepts</h3>
+<div id="key-concepts" class="section level3" number="2.7.1">
+<h3><span class="header-section-number">2.7.1</span> Key Concepts</h3>
 <ol style="list-style-type: decimal">
 <li>Full Join: Preserves all records from both data frames.</li>
 <li>Key Fields: Uses player ID and name as joining keys.</li>
@@ -1568,102 +1594,173 @@ merging strategy was implemented:</p>
 values.</li>
 </ol>
 </div>
-<div id="merging-process" class="section level3" number="2.6.2">
-<h3><span class="header-section-number">2.6.2</span> Merging
+<div id="merging-process" class="section level3" number="2.7.2">
+<h3><span class="header-section-number">2.7.2</span> Merging
 Process</h3>
 <p>The merging process is implemented in the merge_stats() function:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics with detailed explanation</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>merge_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(existing_df, new_df) {</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="co"># Step 1: Prepare keys for joining</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  joining_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ParticipantId&quot;</span>, <span class="st">&quot;ParticipantName&quot;</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="co"># Step 2: Handle duplicate columns</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  new_df <span class="ot">&lt;-</span> new_df <span class="sc">%&gt;%</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;TeamName&quot;</span>, <span class="st">&quot;MinutesPlayed&quot;</span>, <span class="st">&quot;MatchesPlayed&quot;</span>)))</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="co"># Step 3: Perform full join</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  merged_df <span class="ot">&lt;-</span> existing_df <span class="sc">%&gt;%</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>    <span class="fu">full_join</span>(</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>      new_df,</span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>      <span class="at">by =</span> joining_keys,</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>      <span class="at">relationship =</span> <span class="st">&quot;one-to-one&quot;</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    <span class="co"># Step 4: Handle conflicting columns</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>      <span class="at">MinutesPlayed =</span> <span class="fu">pmax</span>(MinutesPlayed.x, MinutesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>      <span class="at">MatchesPlayed =</span> <span class="fu">pmax</span>(MatchesPlayed.x, MatchesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    <span class="co"># Step 5: Clean up temporary columns</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.x&quot;</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.y&quot;</span>))</span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a></span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>  <span class="fu">return</span>(merged_df)</span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics with detailed explanation</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>merge_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(existing_df, new_df) {</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="co"># Step 1: Prepare keys for joining</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  joining_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ParticipantId&quot;</span>, <span class="st">&quot;ParticipantName&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="co"># Step 2: Handle duplicate columns</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  new_df <span class="ot">&lt;-</span> new_df <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;TeamName&quot;</span>, <span class="st">&quot;MinutesPlayed&quot;</span>, <span class="st">&quot;MatchesPlayed&quot;</span>)))</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>  <span class="co"># Step 3: Perform full join</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>  merged_df <span class="ot">&lt;-</span> existing_df <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    <span class="fu">full_join</span>(</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>      new_df,</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>      <span class="at">by =</span> joining_keys,</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>      <span class="at">relationship =</span> <span class="st">&quot;one-to-one&quot;</span></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>    <span class="co"># Step 4: Handle conflicting columns</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>      <span class="at">MinutesPlayed =</span> <span class="fu">pmax</span>(MinutesPlayed.x, MinutesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>      <span class="at">MatchesPlayed =</span> <span class="fu">pmax</span>(MatchesPlayed.x, MatchesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>    <span class="co"># Step 5: Clean up temporary columns</span></span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.x&quot;</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.y&quot;</span>))</span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>  <span class="fu">return</span>(merged_df)</span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>}</span></code></pre></div>
 </div>
-<div id="merging-rules" class="section level3" number="2.6.3">
-<h3><span class="header-section-number">2.6.3</span> Merging Rules</h3>
+<div id="merging-rules" class="section level3" number="2.7.3">
+<h3><span class="header-section-number">2.7.3</span> Merging Rules</h3>
 <ul>
 <li>Keep the highest value for minutes and matches played.</li>
 <li>Preserve player information across all statistics.</li>
 <li>Handle missing values consistently.</li>
 <li>Maintain data integrity during merging.</li>
 </ul>
+</div>
+<div id="output-example" class="section level3" number="2.7.4">
+<h3><span class="header-section-number">2.7.4</span> Output Example</h3>
+<p>Here is how my data looked like:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># data_player &lt;- read_csv(&quot;Project/Main/temp/data/player_stats_20250130_010255.csv&quot;)</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>data_player <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;E:/UNI_stuff/2-sem/Web Scraping/Project/Main/temp/data/player_stats_20250130_010255.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 561 Columns: 73
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (2): ParticipantName, TeamName
+## dbl (71): player_id, MinutesPlayed, MatchesPlayed, Top_scorer, Top_scorer_su...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">glimpse</span>(data_player)</span></code></pre></div>
+<pre><code>## Rows: 561
+## Columns: 73
+## $ ParticipantName                            &lt;chr&gt; &quot;Ashley Young&quot;, &quot;Lukasz Fab…
+## $ player_id                                  &lt;dbl&gt; 23354, 30973, 37234, 38807,…
+## $ TeamName                                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA,…
+## $ MinutesPlayed                              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1086, …
+## $ MatchesPlayed                              &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 14, 0,…
+## $ Top_scorer                                 &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, …
+## $ Top_scorer_subtitle                        &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Assists                                    &lt;dbl&gt; 0, 0, 1, 2, 1, 0, 0, 0, 0, …
+## $ Assists_subtitle                           &lt;dbl&gt; 0.0, 0.0, 2.0, 1.7, 0.3, 0.…
+## $ `Goals_+_Assists`                          &lt;dbl&gt; 0, 0, 1, 2, 1, 0, 0, 1, 0, …
+## $ `Goals_+_Assists_subtitle`                 &lt;dbl&gt; 0.0, 0.0, 2.8, 2.0, 0.7, 0.…
+## $ FotMob_rating                              &lt;dbl&gt; 6.67, 0.00, 6.29, 0.00, 6.8…
+## $ FotMob_rating_subtitle                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 1, …
+## $ Goals_per_90                               &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.0…
+## $ Goals_per_90_subtitle                      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ `Expected_goals_(xG)`                      &lt;dbl&gt; 0.6, 0.0, 0.8, 0.3, 0.4, 0.…
+## $ `Expected_goals_(xG)_subtitle`             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, …
+## $ `Expected_goals_(xG)_per_90`               &lt;dbl&gt; 0.02, 0.00, 0.09, 0.00, 0.0…
+## $ `Expected_goals_(xG)_per_90_subtitle`      &lt;dbl&gt; 0.00, 0.00, 0.00, 0.00, 0.0…
+## $ `Expected_goals_on_target_(xGOT)`          &lt;dbl&gt; 0.3, 0.0, 0.4, 0.2, 0.7, 0.…
+## $ `Expected_goals_on_target_(xGOT)_subtitle` &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, …
+## $ Shots_on_target_per_90                     &lt;dbl&gt; 0.1, 0.0, 0.2, 0.0, 0.0, 0.…
+## $ Shots_on_target_per_90_subtitle            &lt;dbl&gt; 15.4, 0.0, 18.2, 0.0, 0.0, …
+## $ Shots_per_90                               &lt;dbl&gt; 0.5, 0.0, 1.2, 0.0, 0.1, 0.…
+## $ Shots_per_90_subtitle                      &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Accurate_passes_per_90                     &lt;dbl&gt; 22.1, 0.0, 47.8, 0.0, 46.8,…
+## $ Accurate_passes_per_90_subtitle            &lt;dbl&gt; 72.4, 0.0, 90.0, 0.0, 87.9,…
+## $ Big_chances_created                        &lt;dbl&gt; 2, 0, 2, 2, 1, 0, 0, 2, 0, …
+## $ Big_chances_created_subtitle               &lt;dbl&gt; 0, 0, 1, 2, 1, 0, 0, 0, 0, …
+## $ Chances_created                            &lt;dbl&gt; 21, 0, 15, 16, 6, 0, 0, 7, …
+## $ Chances_created_subtitle                   &lt;dbl&gt; 0.8, 0.0, 1.6, 1.9, 0.4, 0.…
+## $ Accurate_long_balls_per_90                 &lt;dbl&gt; 1.9, 0.0, 0.3, 0.0, 1.1, 0.…
+## $ Accurate_long_balls_per_90_subtitle        &lt;dbl&gt; 32.4, 0.0, 60.0, 0.0, 32.1,…
+## $ `Expected_assist_(xA)`                     &lt;dbl&gt; 1.4, 0.0, 2.0, 1.7, 0.3, 0.…
+## $ `Expected_assist_(xA)_subtitle`            &lt;dbl&gt; 0, 0, 1, 2, 1, 0, 0, 0, 0, …
+## $ `Expected_assist_(xA)_per_90`              &lt;dbl&gt; 0.06, 0.00, 0.21, 0.00, 0.0…
+## $ `Expected_assist_(xA)_per_90_subtitle`     &lt;dbl&gt; 0.0, 0.0, 0.1, 0.0, 0.1, 0.…
+## $ `xG_+_xA_per_90`                           &lt;dbl&gt; 0.08, 0.00, 0.30, 0.00, 0.0…
+## $ `xG_+_xA_per_90_subtitle`                  &lt;dbl&gt; 0.00, 0.00, 0.11, 0.00, 0.0…
+## $ Successful_dribbles_per_90                 &lt;dbl&gt; 0.5, 0.0, 0.3, 0.0, 0.3, 0.…
+## $ Successful_dribbles_per_90_subtitle        &lt;dbl&gt; 50.0, 0.0, 25.0, 0.0, 66.7,…
+## $ Big_chances_missed                         &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Big_chances_missed_subtitle                &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Penalties_won                              &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Penalties_won_subtitle                     &lt;dbl&gt; 0.9, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Successful_tackles_per_90                  &lt;dbl&gt; 1.5, 0.0, 0.3, 0.0, 0.9, 0.…
+## $ Successful_tackles_per_90_subtitle         &lt;dbl&gt; 71.7, 0.0, 37.5, 0.0, 63.6,…
+## $ Interceptions_per_90                       &lt;dbl&gt; 0.9, 0.0, 0.3, 0.0, 1.5, 0.…
+## $ Interceptions_per_90_subtitle              &lt;dbl&gt; 22, 0, 3, 0, 23, 0, 0, 0, 0…
+## $ Clearances_per_90                          &lt;dbl&gt; 1.8, 0.0, 0.1, 0.0, 4.8, 0.…
+## $ Clearances_per_90_subtitle                 &lt;dbl&gt; 45, 0, 1, 0, 74, 0, 0, 0, 1…
+## $ Blocks_per_90                              &lt;dbl&gt; 0.2, 0.0, 0.1, 0.0, 1.2, 0.…
+## $ Blocks_per_90_subtitle                     &lt;dbl&gt; 6, 0, 1, 0, 18, 0, 0, 0, 0,…
+## $ Penalties_conceded                         &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 0, 2, …
+## $ Penalties_conceded_subtitle                &lt;dbl&gt; 31, 0, 0, 15, 0, 0, 0, 0, 2…
+## $ Possession_won_final_3rd_per_90            &lt;dbl&gt; 0.4, 0.0, 0.4, 0.0, 0.1, 0.…
+## $ Possession_won_final_3rd_per_90_subtitle   &lt;dbl&gt; 1.9, 0.0, 1.1, 0.0, 1.4, 0.…
+## $ Clean_sheets                               &lt;dbl&gt; 0, 1, 0, 0, 0, 0, 0, 0, 4, …
+## $ Clean_sheets_subtitle                      &lt;dbl&gt; 0, 21, 0, 0, 0, 0, 0, 0, 42…
+## $ Save_percentage                            &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Save_percentage_subtitle                   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 42,…
+## $ Saves_per_90                               &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Saves_per_90_subtitle                      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 88,…
+## $ Goals_prevented                            &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Goals_prevented_subtitle                   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 42,…
+## $ Goals_conceded_per_90                      &lt;dbl&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.…
+## $ Goals_conceded_per_90_subtitle             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 42,…
+## $ Fouls_committed_per_90                     &lt;dbl&gt; 1.3, 0.0, 0.9, 0.0, 1.1, 0.…
+## $ Fouls_committed_per_90_subtitle            &lt;dbl&gt; 5, 0, 2, 0, 2, 0, 0, 0, 1, …
+## $ Yellow_cards                               &lt;dbl&gt; 5, 0, 2, 3, 2, 0, 1, 4, 1, …
+## $ Yellow_cards_subtitle                      &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Red_cards                                  &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Red_cards_subtitle                         &lt;dbl&gt; 5, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
 <hr />
 </div>
 </div>
 </div>
 <div id="data-analysis" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Data Analysis</h1>
-<div id="methods-used" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> Methods Used</h2>
-<pre class="mermaid"><code>graph TD
-    A[main.R] --&gt; B[stats_processor.R]
-    A --&gt; C[utils.R]
-    B --&gt; C
-    D[test_script.R] --&gt; B
-    D --&gt; C</code></pre>
-<p>The analysis focused on exploring the relationships between various
-player statistics and identifying key performance indicators. The
-following methods were applied:</p>
-<ul>
-<li>Descriptive statistics to summarize the data.</li>
-<li>Correlation analysis to identify relationships between
-variables.</li>
-<li>Visualization techniques to present findings.</li>
-</ul>
-<div id="example-analysis-code" class="section level3" number="3.1.1">
-<h3><span class="header-section-number">3.1.1</span> Example Analysis
-Code</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">summary</span>(football_data)</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co"># Correlation between goals and assists</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">cor</span>(football_data<span class="sc">$</span>Goals, football_data<span class="sc">$</span>Assists, <span class="at">use =</span> <span class="st">&quot;complete.obs&quot;</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># Visualization: Goals vs. Assists</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="fu">ggplot</span>(football_data, <span class="fu">aes</span>(<span class="at">x =</span> Goals, <span class="at">y =</span> Assists)) <span class="sc">+</span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Goals vs. Assists&quot;</span>,</span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Goals Scored&quot;</span>,</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Assists&quot;</span></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
-</div>
-<div id="findings" class="section level3" number="3.1.2">
-<h3><span class="header-section-number">3.1.2</span> Findings</h3>
-<ul>
-<li><strong>Top Performers</strong>: The players with the highest goals
-and assists were identified.</li>
-<li><strong>Correlation</strong>: A positive correlation was observed
-between goals and assists, indicating that players who score more goals
-also tend to provide more assists.</li>
-<li><strong>Team Analysis</strong>: Teams with higher average player
-statistics were identified as top-performing teams.</li>
-</ul>
+<p>In this section, we analyze the collected data to uncover patterns,
+trends, and insights into player and team performance. The
+visualizations below highlight key aspects of the data, such as expected
+vs. actual performance, top-performing players, and team-level
+statistics.</p>
+<div id="goals-vs.-expected-goals-xg" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Goals vs. Expected
+Goals (xG)</h2>
+<p>Expected Goals (xG) is a key metric in football analytics that
+estimates the likelihood of a shot resulting in a goal. Comparing actual
+goals scored with xG provides insights into a player’s finishing ability
+and whether they are overperforming or underperforming relative to
+expectations.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Code used for Goals vs xG plot</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">ggplot</span>(data_player, <span class="fu">aes</span>(<span class="at">x =</span> Top_scorer, <span class="at">y =</span> <span class="st">`</span><span class="at">Expected_goals_(xG)</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>    <span class="at">data =</span> data_player <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>      <span class="fu">filter</span>(Top_scorer <span class="sc">&gt;</span> <span class="dv">12</span> <span class="sc">&amp;</span> <span class="st">`</span><span class="at">Expected_goals_(xG)</span><span class="st">`</span> <span class="sc">&gt;</span> <span class="dv">7</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> ParticipantName),</span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span>,</span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a>    <span class="at">check_overlap =</span> T</span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Goals Scored vs Expected Goals (xG) per Season&quot;</span>,</span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Goals Scored&quot;</span>,</span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Expected Goals (xG)&quot;</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" width="768" /></p>
 <hr />
-</div>
 </div>
 </div>
 <div id="conclusion" class="section level1" number="4">
