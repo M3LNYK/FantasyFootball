@@ -11,7 +11,7 @@ output:
 
 # Introduction
 
-The objective of this project is to collect and analyze football players' statistics to gain insights into player performance and create a model to predict performance for fantasy football. In an era where data analytics plays an increasingly crucial role in sports, understanding and predicting player performance has become essential for both professional teams and fantasy football enthusiasts.
+The objective of this project is to collect and analyze football players' statistics to gain insights into player performance and create a model to predict performance for fantasy football. In an era where data analytics plays an increasingly crucial role in sports, understanding and predicting player performance has become essential for teams, fantasy football enthusiasts, and players as well([De Bruyne’s new contract agreed after data analysts convinced him Man City were able to match his ambitions – and vice versa](https://www.nytimes.com/athletic/2503139/2021/04/07/de-bruynes-new-contract-agreed-after-data-analysts-convinced-him-man-city-were-able-to-match-his-ambitions-and-vice-versa/)).
 
 ## Project Background
 
@@ -415,11 +415,8 @@ These findings highlight the potential of web scraping and data analysis in spor
 
 # References
 
-1. [Website URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
+1. [FutMob URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
 
 ---
 
-### Notes:
-1. Replace `[website URL]` and placeholder text with the actual source and details of your project.
-2. Add more visualizations or analyses as needed.
-3. Ensure the report is polished and formatted correctly before submission.
+## Notes:
