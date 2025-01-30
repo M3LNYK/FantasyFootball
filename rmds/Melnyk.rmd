@@ -11,9 +11,48 @@ output:
 
 # Introduction
 
-The objective of this project is to collect and analyze football players statistics to gain insights into player performance and collect data for future analysis and fantasy football prediction. Football analytics has become an essential tool for clubs, analysts, and fans to evaluate players and make data-driven decisions. This report outlines the web scraping process used to gather data from [source], the analysis conducted, and the conclusions drawn from the findings.
+The objective of this project is to collect and analyze football players' statistics to gain insights into player performance and create a model to predict performance for fantasy football. In an era where data analytics plays an increasingly crucial role in sports, understanding and predicting player performance has become essential for both professional teams and fantasy football enthusiasts.
 
-The significance of this project lies in its ability to demonstrate the practical application of web scraping and data analysis techniques in the field of sports analytics. By collecting and analyzing football players statistics, we aim to uncover patterns and trends that can inform decision-making in football management and strategy.
+## Project Background
+
+Fantasy football has evolved from a niche hobby into a global phenomenon, with millions of participants worldwide making weekly decisions about their virtual teams. The success in fantasy football heavily relies on the ability to accurately predict player performance based on historical data and current trends. This project aims to bridge the gap between raw statistical data and actionable insights through web scraping and advanced analytics.
+
+## Project Objectives
+
+The main objectives of this project are:
+
+1. **Data Collection**: Systematically gather comprehensive player statistics from reliable football statistics websites using web scraping techniques in R. Due to the dynamically loaded nature of the target website, parsing data directly from the HTML was not possible. Instead, the data was extracted from JSON files loaded by the website, which required additional steps to identify and process the relevant API endpoints.
+
+2. **Performance Analysis**: Analyze historical performance data to identify patterns and trends to find some unexpected insights in the data.
+
+3. **Insight Generation**: Develop actionable recommendations for fantasy football managers based on the discovered patterns and statistical analysis.
+
+## Significance
+
+This project holds significance for several reasons:
+
+1. **Practical Application**: The findings can be directly applied to fantasy football strategy, helping both casual players and experienced managers make more informed decisions about team selection and transfers in the English Premier League Fantasy game.
+
+2. **Data Science Skills Development**: The project demonstrates the practical application of various data science skills, including:
+- Web scraping
+- Data cleaning and preprocessing
+- JSON file parsing
+- Statistical analysis
+- Predictive modeling
+- Data visualization
+
+3. **Sports Analytics Innovation**: Contributing to the growing field of sports analytics by combining traditional statistics with modern data science techniques.
+
+## Scope and Limitations
+
+The project focuses on data from the English Premier League from season 2023/2024, scraped from [source website], with particular attention to statistics that are relevant for fantasy football scoring. While comprehensive, it's important to note that player performance can be influenced by numerous factors beyond historical statistics, such as:
+- Team tactics
+- Injuries
+- Weather conditions
+- Team chemistry
+- Off-field factors
+
+While the project aims to provide valuable insights for fantasy football managers, it's important to acknowledge its scope and limitations. Additionally, the reliance on JSON files for data extraction introduced some complexity, as the structure of the files required careful inspection and processing to ensure accurate data collection.
 
 ---
 
@@ -23,17 +62,11 @@ The significance of this project lies in its ability to demonstrate the practica
 
 The data was collected using the R programming language, specifically the following libraries:
 
-- `rvest`: For web scraping.
-- `httr`: For handling HTTP requests.
-- `dplyr`: For data manipulation.
-- `stringr`: For string processing.
-- `ggplot2`: For data visualization.
-
-To install these libraries, the following code was used:
-
 ```r
-# Install required packages
-install.packages(c("rvest", "httr", "dplyr", "stringr", "ggplot2"))
+library(tidyverse)  # Collection of data manipulation packages
+library(httr)       # HTTP request handling
+library(jsonlite)   # JSON parsing and manipulation
+library(stringi)    # String manipulation
 ```
 
 ## Source of Data
