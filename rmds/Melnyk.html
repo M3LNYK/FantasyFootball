@@ -5,9 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="generator" content="pandoc" />
 
-        <meta name="author" content="Your Name" />
+        <meta name="author" content="Viktor Melnyk" />
     
-        <meta name="date" content="2025-01-29" />
+        <meta name="date" content="2025-01-30" />
     
     <title>Web Scraping and Analysis of Football Players’ Statistics</title>
 
@@ -1275,15 +1275,25 @@ Statistics</h1>
 Players’ Statistics</a></h2>
     <div id="toc">
       <ul>
-      <li><a href="#introduction" id="toc-introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+      <li><a href="#introduction" id="toc-introduction"><span class="toc-section-number">1</span> Introduction</a>
+      <ul>
+      <li><a href="#project-background" id="toc-project-background"><span class="toc-section-number">1.1</span> Project Background</a></li>
+      <li><a href="#project-objectives" id="toc-project-objectives"><span class="toc-section-number">1.2</span> Project Objectives</a></li>
+      <li><a href="#significance" id="toc-significance"><span class="toc-section-number">1.3</span> Significance</a></li>
+      <li><a href="#scope-and-limitations" id="toc-scope-and-limitations"><span class="toc-section-number">1.4</span> Scope and
+      Limitations</a></li>
+      </ul></li>
       <li><a href="#data-collection-process" id="toc-data-collection-process"><span class="toc-section-number">2</span> Data Collection Process</a>
       <ul>
-      <li><a href="#tools-and-libraries-used" id="toc-tools-and-libraries-used"><span class="toc-section-number">2.1</span> Tools and Libraries
-      Used</a></li>
-      <li><a href="#source-of-data" id="toc-source-of-data"><span class="toc-section-number">2.2</span> Source of Data</a></li>
-      <li><a href="#web-scraping-process" id="toc-web-scraping-process"><span class="toc-section-number">2.3</span> Web Scraping
+      <li><a href="#architecture" id="toc-architecture"><span class="toc-section-number">2.1</span> Architecture</a></li>
+      <li><a href="#file-responsibilities" id="toc-file-responsibilities"><span class="toc-section-number">2.2</span> File
+      Responsibilities:</a></li>
+      <li><a href="#file-relationships" id="toc-file-relationships"><span class="toc-section-number">2.3</span> File Relationships:</a></li>
+      <li><a href="#libraries-used" id="toc-libraries-used"><span class="toc-section-number">2.4</span> Libraries Used</a></li>
+      <li><a href="#data-transformation-process" id="toc-data-transformation-process"><span class="toc-section-number">2.5</span> Data Transformation
       Process</a></li>
-      <li><a href="#challenges-faced" id="toc-challenges-faced"><span class="toc-section-number">2.4</span> Challenges Faced</a></li>
+      <li><a href="#joiningmerging-strategy" id="toc-joiningmerging-strategy"><span class="toc-section-number">2.6</span> Joining/Merging
+      Strategy</a></li>
       </ul></li>
       <li><a href="#data-analysis" id="toc-data-analysis"><span class="toc-section-number">3</span> Data Analysis</a>
       <ul>
@@ -1294,9 +1304,9 @@ Players’ Statistics</a></h2>
       </ul>
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
-                  <p class="author"><span class="glyphicon glyphicon-user"></span> Your
-Name</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2025-01-29</p>
+                  <p class="author"><span class="glyphicon glyphicon-user"></span> Viktor
+Melnyk</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2025-01-30</p>
           </div>
    </div>
      
@@ -1309,120 +1319,297 @@ Name</p>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>The objective of this project is to collect and analyze football
-players statistics to gain insights into player performance and collect
-data for future analysis and fantasy football prediction. Football
-analytics has become an essential tool for clubs, analysts, and fans to
-evaluate players and make data-driven decisions. This report outlines
-the web scraping process used to gather data from [source], the analysis
-conducted, and the conclusions drawn from the findings.</p>
-<p>The significance of this project lies in its ability to demonstrate
-the practical application of web scraping and data analysis techniques
-in the field of sports analytics. By collecting and analyzing football
-players statistics, we aim to uncover patterns and trends that can
-inform decision-making in football management and strategy.</p>
+players’ statistics to gain insights into player performance and create
+a model to predict performance for fantasy football. In an era where
+data analytics plays an increasingly crucial role in sports,
+understanding and predicting player performance has become essential for
+both professional teams and fantasy football enthusiasts.</p>
+<div id="project-background" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Project
+Background</h2>
+<p>Fantasy football has evolved from a niche hobby into a global
+phenomenon, with millions of participants worldwide making weekly
+decisions about their virtual teams. The success in fantasy football
+heavily relies on the ability to accurately predict player performance
+based on historical data and current trends. This project aims to bridge
+the gap between raw statistical data and actionable insights through web
+scraping and advanced analytics.</p>
+</div>
+<div id="project-objectives" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Project
+Objectives</h2>
+<p>The main objectives of this project are:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Data Collection</strong>: Systematically gather
+comprehensive player statistics from reliable football statistics
+websites using web scraping techniques in R. Due to the dynamically
+loaded nature of the target website, parsing data directly from the HTML
+was not possible. Instead, the data was extracted from JSON files loaded
+by the website, which required additional steps to identify and process
+the relevant API endpoints.</p></li>
+<li><p><strong>Performance Analysis</strong>: Analyze historical
+performance data to identify patterns and trends to find some unexpected
+insights in the data.</p></li>
+<li><p><strong>Insight Generation</strong>: Develop actionable
+recommendations for fantasy football managers based on the discovered
+patterns and statistical analysis.</p></li>
+</ol>
+</div>
+<div id="significance" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Significance</h2>
+<p>This project holds significance for several reasons:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Practical Application</strong>: The findings can be
+directly applied to fantasy football strategy, helping both casual
+players and experienced managers make more informed decisions about team
+selection and transfers in the English Premier League Fantasy
+game.</p></li>
+<li><p><strong>Data Science Skills Development</strong>: The project
+demonstrates the practical application of various data science skills,
+including:</p></li>
+</ol>
+<ul>
+<li>Web scraping</li>
+<li>Data cleaning and preprocessing</li>
+<li>JSON file parsing</li>
+<li>Statistical analysis</li>
+<li>Predictive modeling</li>
+<li>Data visualization</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Sports Analytics Innovation</strong>: Contributing to the
+growing field of sports analytics by combining traditional statistics
+with modern data science techniques.</li>
+</ol>
+</div>
+<div id="scope-and-limitations" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Scope and
+Limitations</h2>
+<p>The project focuses on data from the English Premier League from
+season 2023/2024, scraped from [source website], with particular
+attention to statistics that are relevant for fantasy football scoring.
+While comprehensive, it’s important to note that player performance can
+be influenced by numerous factors beyond historical statistics, such as:
+- Team tactics - Injuries - Weather conditions - Team chemistry -
+Off-field factors</p>
+<p>While the project aims to provide valuable insights for fantasy
+football managers, it’s important to acknowledge its scope and
+limitations. Additionally, the reliance on JSON files for data
+extraction introduced some complexity, as the structure of the files
+required careful inspection and processing to ensure accurate data
+collection.</p>
 <hr />
+</div>
 </div>
 <div id="data-collection-process" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Data Collection
 Process</h1>
-<div id="tools-and-libraries-used" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Tools and Libraries
-Used</h2>
-<p>The data was collected using the R programming language, specifically
-the following libraries:</p>
-<ul>
-<li><code>rvest</code>: For web scraping.</li>
-<li><code>httr</code>: For handling HTTP requests.</li>
-<li><code>dplyr</code>: For data manipulation.</li>
-<li><code>stringr</code>: For string processing.</li>
-<li><code>ggplot2</code>: For data visualization.</li>
-</ul>
-<p>To install these libraries, the following code was used:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install required packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;rvest&quot;</span>, <span class="st">&quot;httr&quot;</span>, <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;stringr&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>))</span></code></pre></div>
+<div id="architecture" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Architecture</h2>
+<p>The project is organized into three main files, each with a specific
+role in the data collection and processing pipeline:</p>
+<pre><code>project/
+├── data_visualization/     # Files used in data visualization
+└── data_collection/
+    ├── main.R              # Main execution script
+    ├── utils.R             # Utility functions for HTTP requests and data handling
+    └── stats_processor.R   # Data processing and transformation functions</code></pre>
 </div>
-<div id="source-of-data" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Source of Data</h2>
-<p>The data was scraped from <a href="Source%20of%20football%20statistics.">website URL</a>, a
-comprehensive source of football statistics. The website provides
-detailed information on players, including:</p>
+<div id="file-responsibilities" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> File
+Responsibilities:</h2>
 <ul>
-<li>Player name</li>
-<li>Position</li>
-<li>Team</li>
-<li>Goals scored</li>
-<li>Assists</li>
-<li>Minutes played</li>
-<li>Passing accuracy</li>
-<li>Other relevant statistics</li>
+<li><code>main.R</code>: The central script that orchestrates the entire
+process, including data fetching, processing, and saving.</li>
+<li><code>utils.R</code>: Contains utility functions for HTTP requests,
+JSON parsing, and basic data operations.</li>
+<li><code>stats_processor.R</code>: Implements the core logic for
+processing and transforming raw statistics data into structured
+formats.</li>
 </ul>
 </div>
-<div id="web-scraping-process" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Web Scraping
+<div id="file-relationships" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> File
+Relationships:</h2>
+<p>The following diagram illustrates the relationships between the
+files:</p>
+<div class="float">
+<img role="img" aria-label="File relationships diagram" src="data:image/png;base64,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hAAEuhNIG1+H2PDUoyaaaCLzne98x2y//fZm1llnNUcddZR58cUXe8596qmnNgcddJBZdNFFzfDhw81TTz0VmafK3H///c0cc8xhDj/8cPPMM8/0XHYZGSA2yqDe7DIRG822L60rhwBioxzuuZWq5Zm99trLLL744oGI0JLJLLPMYu6++27z+eef95drxcbCCy9sDj74YPP444/nVqc8M07rmsuzLuTdDAKIjWbYkVZUi4AVG952o9iYjTYso0w22WTB8kNUoOXEE09s5pxzTqOdIUrvv/9+EJQZtxtE980999zm9ddfD7atTjnllGarrbYy888/fxDb8cILL3TtQa7YOOmkk8x2221nVlxxxSBG49577w08GVrCWWihhYy2x55zzjnmqquuiq1Xtbrt/2qD2KiqZbLXS4O9XkxKeo/o5VRkQmwUSZuyyiQgD7uW3D/77LPcxwCrDRAbIYvLCBqUtV1UHoFVVlnFrLHGGkZHrWrAlyCQR0DgTj311EBM2DTddNOZHXbYIYiLcFNfX5/529/+1i9OJCy0c+TVV1/tj9eQx0GxHHfddZf54x//aHbeeecg2FPpiiuuMGeeeWbX2A5XbGhpRkJjt912m6A/33nnneb88883Tz75ZK0DRF2xkfQDP2U+3JQdT8C1qa7WM6bnTsKjiFRmn5pkkknM0ksvHUxMwvFWvbZd74Zll102mHi89957vWbH/Q0gsP766wfL7hoPNBn917/+FYxveZzPhNjo0GGmn356c9hhh5m//vWv5oEHHggMsvLKK5vf/va3gSfgwAMPNP/3f/8XGEX/fvjhh4OcZpxxRrPPPvuYBRdcMAj81PKFhMjaa69tdt111+D8i0cffTS4VoLl6KOPDvK8/fbbg9/ZcmV0xXAccMABRpHxmm0p+FNLI928G+FlFL2oN9xwQ7PTTjsFSyrHH398EBDqLqnU+Zkpc2CoM7eq1112lXfDejis6Bg7dqzRTrc8hUeZ3jL7/KuNv/vd77yayb5vFIyunWokCGy77bbBhDac7r//fvOXv/wlECG+hEfanaqxAaL2Yyt1X0axD/1NN91ktFwiQaEkASH4Wp6QaPjud79rfvWrX5kbbrjBaFYyZMiQQFjIi6EXhpJ+L0+HDKvdH/qipNK3v/3tQDzIqLpfye5S0fKJgj2vvvrqwMPx/e9/35xyyilmv/32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mxPbbZJJJjE77LCDWWKJJYL733jjjcT3drtQIuOII44wiyyyyHiXyVt16623BiLy2WefNV999ZWX8srMJK3YcHeUiEeUl88KbS3NpDmmvEwOlA0BxAZ9oBACemlqnVkvx3HjxvUHusUVHnc+x+uvv2722GOPxC/dNouNK6+80lx99dWRyFdZZRWz7rrrmssuu8w8+OCDwTXyiOy1117BgHfMMceYd999N85cif6+2GKLmS233DIQPs8991xwzzzzzGNWX311s9JKK5mpppoq8HacddZZ5pFHHgkCVOua0ogN9yC7Tu2VENOPDRStKxfq3T4CiI322byUFkedASDh4YoPiRD7u3Alu8VzaGlF69lxszw3ur9NAaLWs6EliwsvvHAC+yt+YpdddgkEwD333GNOOumkgKUVG7PMMos59thjzfvvv99z35l22mnNoYceaqaYYgpz3HHHmddee228PGeYYQaz5pprmk022cTo36effrq58cYba7u8klRsbLbZZkZ9UmmiiSaaQGAhMnruemRQMgHERskGaEvx1rOh/w4YMKDjGrR4WNGgE0U1g7OekG7b/T7++GNz0EEHdZ3xuWIj7fJLHe2kZRB5Ceabbz4jsSdRIbYLLLCAmW666YImyXtw6aWXBgP75ptvbjbaaCNzyimnBF4HKzZ03WmnnWY+/fTTnjFMPfXUgZ0WXXRRM3z4cPPUU09F5jnrrLOa/fff38wxxxxBvMgzzzzTc9llZGDFRqf4InnuJDIWWmihSKERPujOtkF92T5LdqlFcU7hpGdHfZ0EgbIJIDbKtkBLy3dfkHrhphEgb731VrAkM9NMM41HT+7266+/PvjuQ5SXo+liQ+JCP5999pmRB2GfffYxa6+99gQ9zIq4xx57zOjn7bffjuyFncTGxBNPbLQUIg/EcsstFyyBPPzww8FSS5x3yea5+OKLByJCYkiek7vvvtt8/vnn/fWwYmPhhRc2Bx98sHn88cdr+aTYZbuw2Aifjhv2aFiRIZ42WDqJUI+C5OO7LLWET6UrRQCxUSlztLsy7mxNAqTTjhRLSTEE2pmiGbu7rt/pTAP3NMY6ezYUWCkxIdHg7t7YdNNNzQorrBDMZCebbLJgx4eu1S4SLaUoXuPcc88db1Dv1uOmn356c9hhhwVxExdccEHAWCJgxx13DOI7lDQY6sAvCZazzz57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" alt="File relationships diagram" />
+<div class="figcaption">File relationships diagram</div>
+</div>
+<p><code>main.R</code> depends on <code>stats_processor.R</code> for
+data processing and indirectly on <code>utils.R</code> for utility
+functions. <code>stats_processor.R</code> directly calls
+<code>utils.R</code> for HTTP requests and JSON parsing.
+<code>utils.R</code> is a standalone utility file that provides reusable
+functions for the other scripts.</p>
+</div>
+<div id="libraries-used" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Libraries Used</h2>
+<p>The following R libraries were used to implement the data collection
+process:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># Collection of data manipulation packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(httr)       <span class="co"># HTTP request handling</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(jsonlite)   <span class="co"># JSON parsing and manipulation</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">library</span>(stringi)    <span class="co"># String manipulation</span></span></code></pre></div>
+<p>These libraries were chosen for their efficiency and ease of use in
+handling web scraping, JSON parsing, and data manipulation tasks. ## Key
+Functions</p>
+<div id="utils.r-functions" class="section level3" number="2.4.1">
+<h3><span class="header-section-number">2.4.1</span> Utils.R
+Functions</h3>
+<p>The <code>utils.R</code> file contains utility functions that handle
+HTTP requests, JSON parsing, and other basic operations. Below are some
+of the key functions:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">#&#39; Create basic headers for HTTP requests</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">create_basic_headers</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Purpose: Creates standardized headers for API requests</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># Returns: List of HTTP headers</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&#39; Fetch data from URL with retry logic</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">fetch_data</span>(url, <span class="at">retry_count =</span> <span class="dv">3</span>, <span class="at">delay =</span> <span class="dv">2</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># Purpose: Makes HTTP GET requests with retry mechanism</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#   - url: API endpoint URL</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#   - retry_count: Number of retry attempts</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#   - delay: Delay between retries in seconds</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co"># Returns: HTTP response or NULL</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&#39; Parse JSON response</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">parse_json_response</span>(response)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co"># Purpose: Converts HTTP response to JSON object</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#   - response: HTTP response object</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co"># Returns: Parsed JSON data</span></span></code></pre></div>
+</div>
+<div id="stats-processor-functions" class="section level3" number="2.4.2">
+<h3><span class="header-section-number">2.4.2</span> Stats Processor
+Functions</h3>
+<p>The <code>stats_processor.R</code> file contains functions for
+processing and transforming raw statistics data. Key functions
+include:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#&#39; Process single statistic data</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">process_stat_data</span>(stat_data, stat_title)</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Purpose: Transforms raw stat data into structured format</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#   - stat_data: Raw JSON data for a statistic</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># Returns: Processed data frame</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="fu">merge_stats</span>(existing_df, new_df, stat_title)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># Purpose: Combines multiple statistics while handling duplicates</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># Parameters:</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#   - existing_df: Current combined data frame</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#   - new_df: New statistics to merge</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#   - stat_title: Name of the statistic</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># Returns: Merged data frame</span></span></code></pre></div>
+</div>
+</div>
+<div id="data-transformation-process" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Data Transformation
 Process</h2>
-<p>The web scraping process involved the following steps:</p>
-<ol style="list-style-type: decimal">
-<li><strong>Inspecting the Website</strong>: Using browser developer
-tools to identify the structure of the HTML elements containing the
-desired data.</li>
-<li><strong>Extracting Data</strong>: Using the <code>rvest</code>
-package to extract the relevant data from the website.</li>
-<li><strong>Cleaning Data</strong>: Cleaning and structuring the data
-for analysis using <code>dplyr</code> and <code>stringr</code>.</li>
-</ol>
-<p>Here is an example of the R code used for scraping:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co"># Define the URL of the website</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://example-football-stats.com&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co"># Read the HTML content of the page</span></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>webpage <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co"># Extract player names</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>player_names <span class="ot">&lt;-</span> webpage <span class="sc">%&gt;%</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">&quot;.player-name-class&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># Extract player statistics (e.g., goals, assists)</span></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>goals <span class="ot">&lt;-</span> webpage <span class="sc">%&gt;%</span></span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">&quot;.goals-class&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="fu">as.numeric</span>()</span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>assists <span class="ot">&lt;-</span> webpage <span class="sc">%&gt;%</span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">&quot;.assists-class&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>  <span class="fu">as.numeric</span>()</span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co"># Combine data into a data frame</span></span>
-<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>football_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a>  <span class="at">Player =</span> player_names,</span>
-<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a>  <span class="at">Goals =</span> goals,</span>
-<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a>  <span class="at">Assists =</span> assists</span>
-<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a>)</span>
-<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co"># View the first few rows of the data</span></span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="fu">head</span>(football_data)</span></code></pre></div>
+<p>The data collection and transformation process consists of the
+following steps:</p>
+<div id="step-1-initial-data-fetch" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Step 1: Initial
+Data Fetch</h3>
+<p>The main JSON file containing links to individual statistics is
+fetched using the fetch_data() function:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Fetch main JSON containing links to individual statistics</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>main_json <span class="ot">&lt;-</span> <span class="fu">fetch_data</span>(api_url) <span class="sc">%&gt;%</span> <span class="fu">parse_json_response</span>()</span></code></pre></div>
 </div>
-<div id="challenges-faced" class="section level2" number="2.4">
-<h2><span class="header-section-number">2.4</span> Challenges Faced</h2>
-<p>During the web scraping process, the following challenges were
-encountered:</p>
+<div id="step-2-extract-statistics-links" class="section level3" number="2.5.2">
+<h3><span class="header-section-number">2.5.2</span> Step 2: Extract
+Statistics Links</h3>
+<p>The JSON response is parsed to extract URLs and titles for individual
+statistics:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Extract URLs and titles for individual statistics</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>stats <span class="ot">&lt;-</span> main_json<span class="sc">$</span>pageProps<span class="sc">$</span>stats<span class="sc">$</span>players</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>stat_urls <span class="ot">&lt;-</span> stats<span class="sc">$</span>fetchAllUrl</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>stat_titles <span class="ot">&lt;-</span> stats<span class="sc">$</span>header</span></code></pre></div>
+</div>
+<div id="step-3-process-individual-statistics" class="section level3" number="2.5.3">
+<h3><span class="header-section-number">2.5.3</span> Step 3: Process
+Individual Statistics</h3>
+<p>Each statistic is processed using the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Fetch JSON data using an HTTP GET request.</li>
+<li>Parse the JSON response.</li>
+<li>Extract relevant fields.</li>
+<li>Convert the data into a structured data frame.</li>
+<li>Standardize column names.</li>
+<li>Convert data types for consistency.</li>
+</ol>
+</div>
+<div id="step-4-data-cleaning" class="section level3" number="2.5.4">
+<h3><span class="header-section-number">2.5.4</span> Step 4: Data
+Cleaning</h3>
+<p>The processed data is cleaned to ensure consistency and accuracy:</p>
+<ol style="list-style-type: decimal">
+<li>Handle missing values.</li>
+<li>Convert string values to numeric where applicable.</li>
+<li>Standardize player IDs.</li>
+<li>Remove duplicate information.</li>
+</ol>
+</div>
+</div>
+<div id="joiningmerging-strategy" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Joining/Merging
+Strategy</h2>
+<p>To combine multiple statistics into a single dataset, a robust
+merging strategy was implemented:</p>
+<div id="key-concepts" class="section level3" number="2.6.1">
+<h3><span class="header-section-number">2.6.1</span> Key Concepts</h3>
+<ol style="list-style-type: decimal">
+<li>Full Join: Preserves all records from both data frames.</li>
+<li>Key Fields: Uses player ID and name as joining keys.</li>
+<li>Conflict Resolution: Handles duplicate columns and conflicting
+values.</li>
+</ol>
+</div>
+<div id="merging-process" class="section level3" number="2.6.2">
+<h3><span class="header-section-number">2.6.2</span> Merging
+Process</h3>
+<p>The merging process is implemented in the merge_stats() function:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics with detailed explanation</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>merge_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(existing_df, new_df) {</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Step 1: Prepare keys for joining</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>joining_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ParticipantId&quot;</span>, <span class="st">&quot;ParticipantName&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># Step 2: Handle duplicate columns</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>new_df <span class="ot">&lt;-</span> new_df <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;TeamName&quot;</span>, <span class="st">&quot;MinutesPlayed&quot;</span>, <span class="st">&quot;MatchesPlayed&quot;</span>)))</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># Step 3: Perform full join</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>merged_df <span class="ot">&lt;-</span> existing_df <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="fu">full_join</span>(</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>new_df,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="at">by =</span> joining_keys,</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="at">relationship =</span> <span class="st">&quot;one-to-one&quot;</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co"># Step 4: Handle conflicting columns</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="fu">mutate</span>(</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="at">MinutesPlayed =</span> <span class="fu">pmax</span>(MinutesPlayed.x, MinutesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="at">MatchesPlayed =</span> <span class="fu">pmax</span>(MatchesPlayed.x, MatchesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co"># Step 5: Clean up temporary columns</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.x&quot;</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.y&quot;</span>))</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="fu">return</span>(merged_df)</span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="merging-rules" class="section level3" number="2.6.3">
+<h3><span class="header-section-number">2.6.3</span> Merging Rules</h3>
 <ul>
-<li><strong>Dynamic Content</strong>: Some data was loaded dynamically
-using JavaScript, which required additional tools like
-<code>RSelenium</code> or APIs.</li>
-<li><strong>Rate Limiting</strong>: The website imposed rate limits,
-which were addressed by introducing delays between requests using the
-<code>Sys.sleep()</code> function.</li>
-<li><strong>Data Cleaning</strong>: Extracted data often contained
-unwanted characters or formatting issues, which were resolved using
-string manipulation functions.</li>
+<li>Keep the highest value for minutes and matches played.</li>
+<li>Preserve player information across all statistics.</li>
+<li>Handle missing values consistently.</li>
+<li>Maintain data integrity during merging.</li>
 </ul>
 <hr />
+</div>
 </div>
 </div>
 <div id="data-analysis" class="section level1" number="3">
@@ -1447,23 +1634,23 @@ variables.</li>
 <div id="example-analysis-code" class="section level3" number="3.1.1">
 <h3><span class="header-section-number">3.1.1</span> Example Analysis
 Code</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fu">summary</span>(football_data)</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Correlation between goals and assists</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="fu">cor</span>(football_data<span class="sc">$</span>Goals, football_data<span class="sc">$</span>Assists, <span class="at">use =</span> <span class="st">&quot;complete.obs&quot;</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># Visualization: Goals vs. Assists</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="fu">ggplot</span>(football_data, <span class="fu">aes</span>(<span class="at">x =</span> Goals, <span class="at">y =</span> Assists)) <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Goals vs. Assists&quot;</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Goals Scored&quot;</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Assists&quot;</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">summary</span>(football_data)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co"># Correlation between goals and assists</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">cor</span>(football_data<span class="sc">$</span>Goals, football_data<span class="sc">$</span>Assists, <span class="at">use =</span> <span class="st">&quot;complete.obs&quot;</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># Visualization: Goals vs. Assists</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="fu">ggplot</span>(football_data, <span class="fu">aes</span>(<span class="at">x =</span> Goals, <span class="at">y =</span> Assists)) <span class="sc">+</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Goals vs. Assists&quot;</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Goals Scored&quot;</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Assists&quot;</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div>
 </div>
 <div id="findings" class="section level3" number="3.1.2">
 <h3><span class="header-section-number">3.1.2</span> Findings</h3>
@@ -1502,11 +1689,8 @@ for player evaluation.</p>
 <div id="references" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> References</h1>
 <ol style="list-style-type: decimal">
-<li>Wickham, H. (2016). <em>rvest: Easily Harvest (Scrape) Web
-Pages</em>. R package version 1.0.0.</li>
-<li></li>
-<li>Grolemund, G., &amp; Wickham, H. (2017). <em>R for Data
-Science</em>. O’Reilly Media.</li>
+<li><a href="https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024">Website
+URL</a>: Source of football statistics.</li>
 </ol>
 <p>```</p>
 <hr />

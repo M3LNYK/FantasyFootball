@@ -58,9 +58,33 @@ While the project aims to provide valuable insights for fantasy football manager
 
 # Data Collection Process
 
-## Tools and Libraries Used
+## Architecture
+The project is organized into three main files, each with a specific role in the data collection and processing pipeline:
+```
+project/
+├── data_visualization/     # Files used in data visualization
+└── data_collection/
+    ├── main.R              # Main execution script
+    ├── utils.R             # Utility functions for HTTP requests and data handling
+    └── stats_processor.R   # Data processing and transformation functions
+```
 
-The data was collected using the R programming language, specifically the following libraries:
+## File Responsibilities:
+- `main.R`: The central script that orchestrates the entire process, including data fetching, processing, and saving.
+- `utils.R`: Contains utility functions for HTTP requests, JSON parsing, and basic data operations.
+- `stats_processor.R`: Implements the core logic for processing and transforming raw statistics data into structured formats.
+
+## File Relationships:
+The following diagram illustrates the relationships between the files:
+
+![File relationships diagram](figures/WS - Project - Files in data collection structure.png)
+
+`main.R` depends on `stats_processor.R` for data processing and indirectly on `utils.R` for utility functions.
+`stats_processor.R` directly calls `utils.R` for HTTP requests and JSON parsing.
+`utils.R` is a standalone utility file that provides reusable functions for the other scripts.
+
+## Libraries Used
+The following R libraries were used to implement the data collection process:
 
 ```r
 library(tidyverse)  # Collection of data manipulation packages
@@ -69,74 +93,140 @@ library(jsonlite)   # JSON parsing and manipulation
 library(stringi)    # String manipulation
 ```
 
-## Source of Data
+These libraries were chosen for their efficiency and ease of use in handling web scraping, JSON parsing, and data manipulation tasks.
+## Key Functions
 
-The data was scraped from [website URL], a comprehensive source of football statistics. The website provides detailed information on players, including:
-
-- Player name
-- Position
-- Team
-- Goals scored
-- Assists
-- Minutes played
-- Passing accuracy
-- Other relevant statistics
-
-## Web Scraping Process
-
-The web scraping process involved the following steps:
-
-1. **Inspecting the Website**: Using browser developer tools to identify the structure of the HTML elements containing the desired data.
-2. **Extracting Data**: Using the `rvest` package to extract the relevant data from the website.
-3. **Cleaning Data**: Cleaning and structuring the data for analysis using `dplyr` and `stringr`.
-
-Here is an example of the R code used for scraping:
+### Utils.R Functions
+The `utils.R` file contains utility functions that handle HTTP requests, JSON parsing, and other basic operations. Below are some of the key functions:
 
 ```r
-library(rvest)
-library(dplyr)
-library(stringr)
+#' Create basic headers for HTTP requests
+create_basic_headers()
+# Purpose: Creates standardized headers for API requests
+# Returns: List of HTTP headers
 
-# Define the URL of the website
-url <- "https://example-football-stats.com"
+#' Fetch data from URL with retry logic
+fetch_data(url, retry_count = 3, delay = 2)
+# Purpose: Makes HTTP GET requests with retry mechanism
+# Parameters:
+#   - url: API endpoint URL
+#   - retry_count: Number of retry attempts
+#   - delay: Delay between retries in seconds
+# Returns: HTTP response or NULL
 
-# Read the HTML content of the page
-webpage <- read_html(url)
-
-# Extract player names
-player_names <- webpage %>%
-  html_nodes(".player-name-class") %>%
-  html_text()
-
-# Extract player statistics (e.g., goals, assists)
-goals <- webpage %>%
-  html_nodes(".goals-class") %>%
-  html_text() %>%
-  as.numeric()
-
-assists <- webpage %>%
-  html_nodes(".assists-class") %>%
-  html_text() %>%
-  as.numeric()
-
-# Combine data into a data frame
-football_data <- data.frame(
-  Player = player_names,
-  Goals = goals,
-  Assists = assists
-)
-
-# View the first few rows of the data
-head(football_data)
+#' Parse JSON response
+parse_json_response(response)
+# Purpose: Converts HTTP response to JSON object
+# Parameters:
+#   - response: HTTP response object
+# Returns: Parsed JSON data
 ```
 
-## Challenges Faced
+### Stats Processor Functions
+The `stats_processor.R` file contains functions for processing and transforming raw statistics data. Key functions include:
 
-During the web scraping process, the following challenges were encountered:
+```r
+#' Process single statistic data
+process_stat_data(stat_data, stat_title)
+# Purpose: Transforms raw stat data into structured format
+# Parameters:
+#   - stat_data: Raw JSON data for a statistic
+#   - stat_title: Name of the statistic
+# Returns: Processed data frame
 
-- **Dynamic Content**: Some data was loaded dynamically using JavaScript, which required additional tools like `RSelenium` or APIs.
-- **Rate Limiting**: The website imposed rate limits, which were addressed by introducing delays between requests using the `Sys.sleep()` function.
-- **Data Cleaning**: Extracted data often contained unwanted characters or formatting issues, which were resolved using string manipulation functions.
+#' Merge multiple statistics
+merge_stats(existing_df, new_df, stat_title)
+# Purpose: Combines multiple statistics while handling duplicates
+# Parameters:
+#   - existing_df: Current combined data frame
+#   - new_df: New statistics to merge
+#   - stat_title: Name of the statistic
+# Returns: Merged data frame
+```
+
+## Data Transformation Process
+The data collection and transformation process consists of the following steps:
+
+### Step 1: Initial Data Fetch
+The main JSON file containing links to individual statistics is fetched using the fetch_data() function:
+```r
+# Fetch main JSON containing links to individual statistics
+main_json <- fetch_data(api_url) %>% parse_json_response()
+```
+
+### Step 2: Extract Statistics Links
+The JSON response is parsed to extract URLs and titles for individual statistics:
+
+```r
+# Extract URLs and titles for individual statistics
+stats <- main_json$pageProps$stats$players
+stat_urls <- stats$fetchAllUrl
+stat_titles <- stats$header
+```
+
+### Step 3: Process Individual Statistics
+Each statistic is processed using the following steps:
+
+1. Fetch JSON data using an HTTP GET request.
+2. Parse the JSON response.
+3. Extract relevant fields.
+4. Convert the data into a structured data frame.
+5. Standardize column names.
+6. Convert data types for consistency.
+
+### Step 4: Data Cleaning
+The processed data is cleaned to ensure consistency and accuracy:
+
+1. Handle missing values.
+2. Convert string values to numeric where applicable.
+3. Standardize player IDs.
+4. Remove duplicate information.
+
+## Joining/Merging Strategy
+To combine multiple statistics into a single dataset, a robust merging strategy was implemented:
+
+### Key Concepts
+1. Full Join: Preserves all records from both data frames.
+2. Key Fields: Uses player ID and name as joining keys.
+3. Conflict Resolution: Handles duplicate columns and conflicting values.
+
+### Merging Process
+The merging process is implemented in the merge_stats() function:
+```r
+
+#' Merge multiple statistics with detailed explanation
+merge_stats <- function(existing_df, new_df) {
+# Step 1: Prepare keys for joining
+joining_keys <- c("ParticipantId", "ParticipantName")
+
+# Step 2: Handle duplicate columns
+new_df <- new_df %>%
+select(-any_of(c("TeamName", "MinutesPlayed", "MatchesPlayed")))
+
+# Step 3: Perform full join
+merged_df <- existing_df %>%
+full_join(
+new_df,
+by = joining_keys,
+relationship = "one-to-one"
+) %>%
+# Step 4: Handle conflicting columns
+mutate(
+MinutesPlayed = pmax(MinutesPlayed.x, MinutesPlayed.y, na.rm = TRUE),
+MatchesPlayed = pmax(MatchesPlayed.x, MatchesPlayed.y, na.rm = TRUE)
+) %>%
+# Step 5: Clean up temporary columns
+select(-ends_with(".x"), -ends_with(".y"))
+
+return(merged_df)
+}
+```
+
+### Merging Rules
+ - Keep the highest value for minutes and matches played.
+ - Preserve player information across all statistics.
+ - Handle missing values consistently.
+ - Maintain data integrity during merging.
 
 ---
 
@@ -204,8 +294,6 @@ These findings highlight the potential of web scraping and data analysis in spor
 # References
 
 1. [Website URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
-
-```
 
 ---
 
