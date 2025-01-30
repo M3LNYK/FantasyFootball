@@ -192,33 +192,33 @@ To combine multiple statistics into a single dataset, a robust merging strategy 
 
 ### Merging Process
 The merging process is implemented in the merge_stats() function:
-```r
 
+```r
 #' Merge multiple statistics with detailed explanation
 merge_stats <- function(existing_df, new_df) {
-# Step 1: Prepare keys for joining
-joining_keys <- c("ParticipantId", "ParticipantName")
+  # Step 1: Prepare keys for joining
+  joining_keys <- c("ParticipantId", "ParticipantName")
 
-# Step 2: Handle duplicate columns
-new_df <- new_df %>%
-select(-any_of(c("TeamName", "MinutesPlayed", "MatchesPlayed")))
+  # Step 2: Handle duplicate columns
+  new_df <- new_df %>%
+    select(-any_of(c("TeamName", "MinutesPlayed", "MatchesPlayed")))
 
-# Step 3: Perform full join
-merged_df <- existing_df %>%
-full_join(
-new_df,
-by = joining_keys,
-relationship = "one-to-one"
-) %>%
-# Step 4: Handle conflicting columns
-mutate(
-MinutesPlayed = pmax(MinutesPlayed.x, MinutesPlayed.y, na.rm = TRUE),
-MatchesPlayed = pmax(MatchesPlayed.x, MatchesPlayed.y, na.rm = TRUE)
-) %>%
-# Step 5: Clean up temporary columns
-select(-ends_with(".x"), -ends_with(".y"))
+  # Step 3: Perform full join
+  merged_df <- existing_df %>%
+    full_join(
+      new_df,
+      by = joining_keys,
+      relationship = "one-to-one"
+    ) %>%
+    # Step 4: Handle conflicting columns
+    mutate(
+      MinutesPlayed = pmax(MinutesPlayed.x, MinutesPlayed.y, na.rm = TRUE),
+      MatchesPlayed = pmax(MatchesPlayed.x, MatchesPlayed.y, na.rm = TRUE)
+    ) %>%
+    # Step 5: Clean up temporary columns
+    select(-ends_with(".x"), -ends_with(".y"))
 
-return(merged_df)
+  return(merged_df)
 }
 ```
 

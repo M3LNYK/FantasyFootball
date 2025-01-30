@@ -1448,10 +1448,10 @@ functions for the other scripts.</p>
 <h2><span class="header-section-number">2.4</span> Libraries Used</h2>
 <p>The following R libraries were used to implement the data collection
 process:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)  <span class="co"># Collection of data manipulation packages</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(httr)       <span class="co"># HTTP request handling</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(jsonlite)   <span class="co"># JSON parsing and manipulation</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">library</span>(stringi)    <span class="co"># String manipulation</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>  <span class="fu">library</span>(tidyverse)  <span class="co"># Collection of data manipulation packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">library</span>(httr)       <span class="co"># HTTP request handling</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">library</span>(jsonlite)   <span class="co"># JSON parsing and manipulation</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">library</span>(stringi)    <span class="co"># String manipulation</span></span></code></pre></div>
 <p>These libraries were chosen for their efficiency and ease of use in
 handling web scraping, JSON parsing, and data manipulation tasks. ## Key
 Functions</p>
@@ -1572,33 +1572,32 @@ values.</li>
 <h3><span class="header-section-number">2.6.2</span> Merging
 Process</h3>
 <p>The merging process is implemented in the merge_stats() function:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics with detailed explanation</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>merge_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(existing_df, new_df) {</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Step 1: Prepare keys for joining</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>joining_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ParticipantId&quot;</span>, <span class="st">&quot;ParticipantName&quot;</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># Step 2: Handle duplicate columns</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>new_df <span class="ot">&lt;-</span> new_df <span class="sc">%&gt;%</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;TeamName&quot;</span>, <span class="st">&quot;MinutesPlayed&quot;</span>, <span class="st">&quot;MatchesPlayed&quot;</span>)))</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># Step 3: Perform full join</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>merged_df <span class="ot">&lt;-</span> existing_df <span class="sc">%&gt;%</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="fu">full_join</span>(</span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>new_df,</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="at">by =</span> joining_keys,</span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="at">relationship =</span> <span class="st">&quot;one-to-one&quot;</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co"># Step 4: Handle conflicting columns</span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="fu">mutate</span>(</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="at">MinutesPlayed =</span> <span class="fu">pmax</span>(MinutesPlayed.x, MinutesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="at">MatchesPlayed =</span> <span class="fu">pmax</span>(MatchesPlayed.x, MatchesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co"># Step 5: Clean up temporary columns</span></span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.x&quot;</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.y&quot;</span>))</span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a></span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="fu">return</span>(merged_df)</span>
-<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#&#39; Merge multiple statistics with detailed explanation</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>merge_stats <span class="ot">&lt;-</span> <span class="cf">function</span>(existing_df, new_df) {</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="co"># Step 1: Prepare keys for joining</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  joining_keys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;ParticipantId&quot;</span>, <span class="st">&quot;ParticipantName&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="co"># Step 2: Handle duplicate columns</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  new_df <span class="ot">&lt;-</span> new_df <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="fu">c</span>(<span class="st">&quot;TeamName&quot;</span>, <span class="st">&quot;MinutesPlayed&quot;</span>, <span class="st">&quot;MatchesPlayed&quot;</span>)))</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="co"># Step 3: Perform full join</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  merged_df <span class="ot">&lt;-</span> existing_df <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>    <span class="fu">full_join</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>      new_df,</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>      <span class="at">by =</span> joining_keys,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>      <span class="at">relationship =</span> <span class="st">&quot;one-to-one&quot;</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    <span class="co"># Step 4: Handle conflicting columns</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>      <span class="at">MinutesPlayed =</span> <span class="fu">pmax</span>(MinutesPlayed.x, MinutesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>      <span class="at">MatchesPlayed =</span> <span class="fu">pmax</span>(MatchesPlayed.x, MatchesPlayed.y, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    <span class="co"># Step 5: Clean up temporary columns</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.x&quot;</span>), <span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">&quot;.y&quot;</span>))</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>  <span class="fu">return</span>(merged_df)</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="merging-rules" class="section level3" number="2.6.3">
 <h3><span class="header-section-number">2.6.3</span> Merging Rules</h3>
@@ -1692,7 +1691,6 @@ for player evaluation.</p>
 <li><a href="https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024">Website
 URL</a>: Source of football statistics.</li>
 </ol>
-<p>```</p>
 <hr />
 <div id="notes" class="section level3" number="5.0.1">
 <h3><span class="header-section-number">5.0.1</span> Notes:</h3>
