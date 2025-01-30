@@ -11,6 +11,7 @@ ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
   # Add points
   geom_point(color = "blue", alpha = 0.6) +
   # Add labels for filtered data
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
   geom_text(
     data = data_player %>%
       filter(Top_scorer > 12 & `Expected_goals_(xG)` > 7),
@@ -33,6 +34,7 @@ ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
 ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
   # Add points
   geom_point(color = "green", alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
   # Add labels for filtered data
   geom_text(
     data = data_player %>%
