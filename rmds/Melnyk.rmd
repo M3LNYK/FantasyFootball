@@ -267,16 +267,47 @@ ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
     check_overlap = T
   ) +
   labs(
-    title = "Goals Scored vs Expected Goals (xG) per Season",
-    x = "Goals Scored",
-    y = "Expected Goals (xG)"
+    title = "Goals scored vs Expected goals (xG) per Season",
+    x = "Goals scored",
+    y = "Expected goals (xG)"
   ) +
   theme_minimal()
 
 ```
 
+**Insights**:
 
+- Players below the red dashed line are overperforming their xG, indicating exceptional finishing ability.
+- Players above the line are underperforming their xG, suggesting inefficiency in converting chances.
 
+## Assists vs. Expected assists (xA)
+
+Expected Assists (xA) measures the likelihood that a pass will result in a goal. Comparing actual assists with xA helps identify players who are creating high-quality chances and those who are benefiting from teammates' finishing ability.
+
+```{r}
+# Assists vs xA
+ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
+  geom_point(color = "green", alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  geom_text(
+    data = data_player %>%
+      filter(Assists > 9 & `Expected_assist_(xA)` > 4),
+    aes(label = ParticipantName),
+    size = 3,
+    check_overlap = T
+  ) +
+  labs(
+    title = "Assists vs Expected assists (xA) per Season",
+    x = "Assists",
+    y = "Expected assists (xA)"
+  ) +
+  theme_minimal()
+```
+
+**Insights**:
+
+- Players below the red dashed line are overperforming their xA, indicating they are benefiting from teammates' finishing ability.
+- Players above the line are underperforming their xA, suggesting inefficiency in converting high-quality chances into assists.
 ---
 
 # Conclusion
