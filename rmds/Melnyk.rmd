@@ -1,6 +1,6 @@
 ---
 title: "Web Scraping and Analysis of Football Players' Statistics"
-author: "Your Name"
+author: "Viktor Melnyk"
 date: "`r Sys.Date()`"
 output:
     rmdformats::readthedown:
@@ -170,9 +170,7 @@ These findings highlight the potential of web scraping and data analysis in spor
 
 # References
 
-1. Wickham, H. (2016). *rvest: Easily Harvest (Scrape) Web Pages*. R package version 1.0.0.
-2. [Website URL]: Source of football statistics.
-3. Grolemund, G., & Wickham, H. (2017). *R for Data Science*. O'Reilly Media.
+1. [Website URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
 
 ```
 
