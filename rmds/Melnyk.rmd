@@ -346,6 +346,59 @@ ggplot(
 
 ```
 
+## Top 3 Players Comparison
+
+A radar chart can be used to compare the top 3 players across multiple metrics, such as Goals, Assists, Rating, xG, and xA.
+
+```{r}
+# Example for comparing top 3 scorers
+radar_plot_top_scorers <- data_player %>%
+  arrange(desc(Top_scorer)) %>%
+  head(3) %>%
+  select(
+    ParticipantName,
+    Goals = Top_scorer,
+    Assists,
+    `xG` = `Expected_goals_(xG)`,
+    `xA` = `Expected_assist_(xA)`,
+    Rating = FotMob_rating
+  ) %>%
+  # Prepare data for radar plot
+  column_to_rownames("ParticipantName") %>%
+  # Add max and min rows required by fmsb
+  rbind(
+    apply(., 2, max),  # Max values
+    apply(., 2, min),  # Min values
+    .
+  )
+
+# Create the radar plot
+par(mar = c(1, 3, 3, 1))  # Adjust margins
+radarchart(
+  radar_plot_top_scorers,
+  pcol = c("red", "blue", "green"),  # Line colors
+  pfcol = scales::alpha(c("red", "blue", "green"), 0.3),  # Fill colors
+  plwd = 2,  # Line width
+  cglcol = "grey",  # Grid color
+  cglty = 1,  # Grid line type
+  axislabcol = "grey50",  # Axis label color
+  caxislabels = seq(0, 1, 0.25),  # Custom axis labels
+  title = "Top 3 Scorers Performance Comparison"
+)
+# Add legend
+legend(
+  "topleft",
+  legend = rownames(radar_plot_top_scorers)[-(1:2)],
+  col = c("red", "blue", "green"),
+  lwd = 2,
+  bty = "n"
+)
+```
+
+**Insights**:
+
+- The comparison highlights the strengths and weaknesses of the top 3 players across key metrics.
+- This visualization is particularly useful for fantasy football managers looking to evaluate player performance holistically.
 
 ---
 
@@ -355,7 +408,6 @@ The analysis of football players' statistics provided valuable insights into pla
 
 - The identification of top-performing players based on goals and assists.
 - A positive correlation between goals and assists, suggesting that players who excel in one area often excel in the other.
-- The importance of data-driven decision-making in football management.
 
 These findings highlight the potential of web scraping and data analysis in sports analytics. Future work could involve expanding the dataset to include more seasons or exploring advanced statistical models for player evaluation.
 
