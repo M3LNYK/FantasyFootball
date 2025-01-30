@@ -1,5 +1,6 @@
 library(tidyverse)
 library(ggplot2)
+library(fmsb)
 
 
 data_player <- read_csv("Project/Main/temp/data/player_stats_20250130_010255.csv")
@@ -189,3 +190,51 @@ ggplot(
   ) +
   geom_text(aes(label = Count),
             position = position_stack(vjust = 0.5))
+
+##
+
+# 1. Radar Chart comparing top scorers across multiple metrics
+# Example for comparing top 3 scorers
+radar_plot_top_scorers <- data_player %>%
+  # Filter top 3 scorers
+  arrange(desc(Top_scorer)) %>%
+  head(3) %>%
+  # Select relevant metrics
+  select(
+    ParticipantName,
+    Goals = Top_scorer,
+    Assists,
+    `xG` = `Expected_goals_(xG)`,
+    `xA` = `Expected_assist_(xA)`,
+    Rating = FotMob_rating
+  ) %>%
+  # Prepare data for radar plot
+  column_to_rownames("ParticipantName") %>%
+  # Add max and min rows required by fmsb
+  rbind(
+    apply(., 2, max),  # Max values
+    apply(., 2, min),  # Min values
+    .
+  )
+
+# Create the radar plot
+par(mar = c(1, 3, 3, 1))  # Adjust margins
+radarchart(
+  radar_plot_top_scorers,
+  pcol = c("red", "blue", "green"),  # Line colors
+  pfcol = scales::alpha(c("red", "blue", "green"), 0.3),  # Fill colors
+  plwd = 2,  # Line width
+  cglcol = "grey",  # Grid color
+  cglty = 1,  # Grid line type
+  axislabcol = "grey50",  # Axis label color
+  caxislabels = seq(0, 1, 0.25),  # Custom axis labels
+  title = "Top 3 Scorers Performance Comparison"
+)
+# Add legend
+legend(
+  "topleft",
+  legend = rownames(radar_plot_top_scorers)[-(1:2)],
+  col = c("red", "blue", "green"),
+  lwd = 2,
+  bty = "n"
+)
