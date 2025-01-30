@@ -4,13 +4,12 @@ library(fmsb)
 
 
 data_player <- read_csv("Project/Main/temp/data/player_stats_20250130_010255.csv")
+glimpse(data_player)
 head(data_player)
 
 # Create the scatter plot
 ggplot(data_player, aes(x = Top_scorer, y = `Expected_goals_(xG)`)) +
-  # Add points
   geom_point(color = "blue", alpha = 0.6) +
-  # Add labels for filtered data
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
   geom_text(
     data = data_player %>%
