@@ -5,8 +5,8 @@ library(jsonlite)
 library(stringi)
 
 # Load utility functions
-source("Project\\Main\\demo\\utils.R")
-source("Project\\Main\\demo\\stats_processor.R")
+source("Project\\Main\\data_collection\\utils.R")
+source("Project\\Main\\data_collection\\stats_processor.R")
 
 #' Main function to fetch and process all statistics
 #' @param api_url URL of the main JSON

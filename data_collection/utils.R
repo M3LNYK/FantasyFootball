@@ -32,10 +32,6 @@ fetch_data <- function(url, retry_count = 3, delay = 2) {
       Sys.sleep(delay)  # Add delay between retries
       response <- GET(url, add_headers(create_basic_headers()))
 
-      # Debugging: Print response headers
-      cat("Response headers:\n")
-      print(response$headers)
-
       if (status_code(response) == 200) {
         cat("Successfully fetched data from:", url, "\n")
         return(response)
