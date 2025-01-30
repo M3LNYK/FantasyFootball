@@ -308,6 +308,45 @@ ggplot(data_player, aes(x = Assists, y = `Expected_assist_(xA)`)) +
 
 - Players below the red dashed line are overperforming their xA, indicating they are benefiting from teammates' finishing ability.
 - Players above the line are underperforming their xA, suggesting inefficiency in converting high-quality chances into assists.
+
+## Top 15 Players by Assists
+
+Confirmation of data mentioned above.
+
+```{r}
+ggplot(
+  data_player %>%
+    arrange(desc(Assists)) %>%
+    head(15),  # Top 15 players
+  aes(x = reorder(ParticipantName, Assists), y = Assists, fill = TeamName)
+) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  geom_text(
+    aes(label = sprintf("%d", Assists)),
+    hjust = -0.2,
+    size = 3
+  ) +
+  labs(
+    title = "Top 15 players by assists",
+    x = "",
+    y = "Assists",
+    fill = "Team"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text.y = element_text(size = 10),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  ) +
+  scale_y_continuous(expand = c(0, 0, 0.1, 0)) +  # Adjust y-axis limits
+  guides(fill = guide_legend(nrow = 2))  # Arrange legend in two rows
+
+```
+
+
 ---
 
 # Conclusion
