@@ -420,3 +420,5 @@ These findings highlight the potential of web scraping and data analysis in spor
 ---
 
 ## Notes:
+
+During one of the classes you told me that, this approach, described above, is not recommended to do and will not be enough or sufficient to pass the project. Unfortunately, I could not scrap the data other than through JSON file from the selected web page, therefore I decided create another, additional file where I showcase a bit that I know how to scrap frontend data, but it is not related to the project or overall business idea. This scrapper will be in `fut_demo.R` file and can scrap FIFA cards stats from the web page. At first, it scans given page for links to players' cards as well as amount of pages to scrap and after scraps individually each card link for cards data and details. If you'll have any further questions - please contact me via email - 251528@student.pwr.edu.pl
