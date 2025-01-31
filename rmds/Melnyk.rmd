@@ -7,6 +7,7 @@ output:
         highlight: kate
         number_sections: true
         self_contained: true
+        css: "custom.css"
 ---
 
 # Introduction
@@ -46,6 +47,7 @@ This project holds significance for several reasons:
 ## Scope and Limitations
 
 The project focuses on data from the English Premier League from season 2023/2024, scraped from [source website], with particular attention to statistics that are relevant for fantasy football scoring. While comprehensive, it's important to note that player performance can be influenced by numerous factors beyond historical statistics, such as:
+
 - Team tactics
 - Injuries
 - Weather conditions
@@ -238,7 +240,6 @@ merge_stats <- function(existing_df, new_df) {
 
 Here is how my data looked like:
 ```{r}
-# data_player <- read_csv("Project/Main/temp/data/player_stats_20250130_010255.csv")
 data_player <- read_csv("E:/UNI_stuff/2-sem/Web Scraping/Project/Main/temp/data/player_stats_20250130_010255.csv")
 
 glimpse(data_player)
@@ -416,9 +417,11 @@ These findings highlight the potential of web scraping and data analysis in spor
 # References
 
 1. [FutMob URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
+2. [De Bruyne’s new contract agreed after data analysts convinced him Man City were able to match his ambitions – and vice versa](https://www.nytimes.com/athletic/2503139/2021/04/07/de-bruynes-new-contract-agreed-after-data-analysts-convinced-him-man-city-were-able-to-match-his-ambitions-and-vice-versa/) : Article about how data changes football contract negotiations.
+3. [Fut GG url](https://www.fut.gg/players/) : described in notes, used for page scraping.
 
 ---
 
 ## Notes:
 
-During one of the classes you told me that, this approach, described above, is not recommended to do and will not be enough or sufficient to pass the project. Unfortunately, I could not scrap the data other than through JSON file from the selected web page, therefore I decided create another, additional file where I showcase a bit that I know how to scrap frontend data, but it is not related to the project or overall business idea. This scrapper will be in `fut_demo.R` file and can scrap FIFA cards stats from the web page. At first, it scans given page for links to players' cards as well as amount of pages to scrap and after scraps individually each card link for cards data and details. If you'll have any further questions - please contact me via email - 251528@student.pwr.edu.pl
+During one of the classes you told me that, this approach, described above, is not recommended to do and will not be enough or sufficient to pass the project. Unfortunately, I could not scrap the data other than through JSON file from the selected web page, therefore I decided create another, additional file where I showcase a bit that I know how to scrap frontend data, but it is not related to the project or overall business idea. This scrapper will be in `fut_demo.R` file and can scrap FIFA cards stats from the web page. At first, it scans given page for links to players' cards as well as amount of pages to scrap and after scraps individually each card link for cards data and details. If you'll have any further questions, please contact me via email - 251528@student.pwr.edu.pl

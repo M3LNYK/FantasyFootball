@@ -7,7 +7,7 @@
 
         <meta name="author" content="Viktor Melnyk" />
     
-        <meta name="date" content="2025-01-30" />
+        <meta name="date" content="2025-01-31" />
     
     <title>Web Scraping and Analysis of Football Players’ Statistics</title>
 
@@ -1182,6 +1182,7 @@ code span.vs { color: #bf0303; }
 code span.wa { color: #bf0303; } 
 </style>
     
+        <style type="text/css">@media screen and (max-width: 1000px) {.tablet-hide {display: none;}#content {margin-left: 0;padding: 1em;}#content.shift {position: relative;min-width: 100%;left: 300px;top: 0;height: 100%;overflow: hidden;}#sidebar {font-size: 120%;left: -300px;width: 300px;}#content.shift #sidebar {font-size: 120%;left: 0;width: 300px; }#nav-top {display: inline-block;}#postamble {left: -300px;}#postamble.shift {font-size: 90%; left: 0;width: 100%; }#main .nav-pills {margin-left: 0px;}#main .nav-pills li {margin-left: 10px !important;}#main .nav-pills > li > a {padding: 2px 8px !important;margin-right: 0px !important;}}#content {max-width: 850px;}@media (min-width: 1450px) {#content {width: 1150px;margin: 0 auto;}#sidebar {position: fixed;left: 50%;width: 300px;transform: translateX(-725px);}}@media screen and (max-width: 768px) {img {max-width: 100%;width: auto;}}:root {--light-tone: #b5a6c6; --pale-tone: #7b5a9c; --strong-tone: #330066; --brighter-tone: #6930c3; --light-gray: #f6f6f6; }div.sourceCode::before {content: "Code [" counter(counter-rchunks) "]: ";display: inline;position: absolute;left: -5em;font-size: 0.7em;color: var(--brighter-tone);}#nav-top span.glyphicon {color: var(--pale-tone);}#postamble {background: var(--pale-tone);border-top: solid 10px var(--pale-tone);}#postamble .date {color: white;}.title {text-align: center;color: var(--strong-tone);}.subtitle {color: var(--strong-tone);}h1,h2,h3,h4,h5,h6,legend {color: var(--pale-tone);}#main :not(.leaflet-control) > a {color: var(--pale-tone);background-image: var(--pale-tone);}#sidebar h2 {background-color: var(--pale-tone);}#main .nav-pills > li.active > a,#main .nav-pills > li.active > a:hover,#main .nav-pills > li.active > a:focus {background-color: var(--pale-tone);}#sidebar #toc,#sidebar {background-color: var(--light-gray);color: black;}#sidebar #toc ul li a:hover {background-color: var(--light-tone);color: black;}# toc ul.nav li.active ul li.active a {background-color: var(--light-tone);}code {color: var(--strong-tone);}#sidebar a {color: black;}</style>
     
     <!-- tabsets -->
     <script>
@@ -1317,7 +1318,7 @@ Players’ Statistics</a></h2>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Viktor
 Melnyk</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2025-01-30</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2025-01-31</p>
           </div>
    </div>
      
@@ -1402,9 +1403,15 @@ Limitations</h2>
 season 2023/2024, scraped from [source website], with particular
 attention to statistics that are relevant for fantasy football scoring.
 While comprehensive, it’s important to note that player performance can
-be influenced by numerous factors beyond historical statistics, such as:
-- Team tactics - Injuries - Weather conditions - Team chemistry -
-Off-field factors</p>
+be influenced by numerous factors beyond historical statistics, such
+as:</p>
+<ul>
+<li>Team tactics</li>
+<li>Injuries</li>
+<li>Weather conditions</li>
+<li>Team chemistry</li>
+<li>Off-field factors</li>
+</ul>
 <p>While the project aims to provide valuable insights for fantasy
 football managers, it’s important to acknowledge its scope and
 limitations. Additionally, the reliance on JSON files for data
@@ -1648,8 +1655,7 @@ Process</h3>
 <div id="output-example" class="section level3" number="2.7.4">
 <h3><span class="header-section-number">2.7.4</span> Output Example</h3>
 <p>Here is how my data looked like:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># data_player &lt;- read_csv(&quot;Project/Main/temp/data/player_stats_20250130_010255.csv&quot;)</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>data_player <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;E:/UNI_stuff/2-sem/Web Scraping/Project/Main/temp/data/player_stats_20250130_010255.csv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>data_player <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;E:/UNI_stuff/2-sem/Web Scraping/Project/Main/temp/data/player_stats_20250130_010255.csv&quot;</span>)</span></code></pre></div>
 <pre><code>## Rows: 561 Columns: 73
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;,&quot;
@@ -1927,10 +1933,27 @@ for player evaluation.</p>
 <ol style="list-style-type: decimal">
 <li><a href="https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024">FutMob
 URL</a>: Source of football statistics.</li>
+<li><a href="https://www.nytimes.com/athletic/2503139/2021/04/07/de-bruynes-new-contract-agreed-after-data-analysts-convinced-him-man-city-were-able-to-match-his-ambitions-and-vice-versa/">De
+Bruyne’s new contract agreed after data analysts convinced him Man City
+were able to match his ambitions – and vice versa</a> : Article about
+how data changes football contract negotiations.</li>
+<li><a href="https://www.fut.gg/players/">Fut GG url</a> : described in
+notes, used for page scraping.</li>
 </ol>
 <hr />
 <div id="notes" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Notes:</h2>
+<p>During one of the classes you told me that, this approach, described
+above, is not recommended to do and will not be enough or sufficient to
+pass the project. Unfortunately, I could not scrap the data other than
+through JSON file from the selected web page, therefore I decided create
+another, additional file where I showcase a bit that I know how to scrap
+frontend data, but it is not related to the project or overall business
+idea. This scrapper will be in <code>fut_demo.R</code> file and can
+scrap FIFA cards stats from the web page. At first, it scans given page
+for links to players’ cards as well as amount of pages to scrap and
+after scraps individually each card link for cards data and details. If
+you’ll have any further questions, please contact me via email - <a href="mailto:251528@student.pwr.edu.pl" class="email">251528@student.pwr.edu.pl</a></p>
 </div>
 </div>
 </div>
