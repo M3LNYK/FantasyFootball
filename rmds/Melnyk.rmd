@@ -419,6 +419,7 @@ These findings highlight the potential of web scraping and data analysis in spor
 1. [FutMob URL](https://www.fotmob.com/en-GB/leagues/47/stats/premier-league?season=2023-2024): Source of football statistics.
 2. [De Bruyne’s new contract agreed after data analysts convinced him Man City were able to match his ambitions – and vice versa](https://www.nytimes.com/athletic/2503139/2021/04/07/de-bruynes-new-contract-agreed-after-data-analysts-convinced-him-man-city-were-able-to-match-his-ambitions-and-vice-versa/) : Article about how data changes football contract negotiations.
 3. [Fut GG url](https://www.fut.gg/players/) : described in notes, used for page scraping.
+4. [GitHub link of this project](https://github.com/M3LNYK/FantasyFootball) : this project is available on my GitHub, I will push it later.
 
 ---
 
